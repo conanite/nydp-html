@@ -1,0 +1,64 @@
+;
+; render-as-textile:
+;
+; ================================================================================
+;
+; the simplest case:
+;
+; (render-as-textile "hello world")
+;
+; expands to
+;
+; "<p>hello world</p>"
+;
+; ================================================================================
+;
+; next case,
+;
+; (render-as-textile (get-some-text-from 'somewhere))
+;
+; expands to
+;
+; (textile-to-html (get-some-text-from 'somewhere))
+;
+; ================================================================================
+;
+; the most useful case:
+;
+; (render-as-textile "hello %%(name)")
+;
+; expands to :
+;
+; (string-pieces "<p>hello" name "<p>")
+;
+;
+
+(def textile-process-parts (parts)
+  (let separator (random-string 20)
+       (string-split (textile-to-html (joinstr "==%%(just separator)=="
+                                               parts))
+                     separator)))
+
+(def build-textile-interpolator (pieces)
+     (let tuples (pairs pieces)
+          `(string-pieces ,@(apply + (zip (textile-process-parts (map car tuples))
+                                          (map cadr tuples))))))
+
+(mac compile-as-textile (arg)
+     (if (isa 'string arg)
+         (textile-to-html arg)
+         (and (pair? arg)
+              (eq? 'string-pieces (car arg)))
+         `(build-textile-interpolator ,(quotify (cdr arg)))
+         `(list 'textile-to-html ',arg)))
+
+(mac textile-build-function (param-names textile-string)
+     `(fn ,param-names (render-as-textile ,textile-string)))
+
+(mac render-as-textile (arg)
+     (if (isa 'string arg)
+         (textile-to-html arg)
+         (and (pair? arg)
+              (eq? 'string-pieces (car arg)))
+         (build-textile-interpolator (cdr arg))
+         `(textile-to-html ,arg)))

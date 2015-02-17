@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'nydp/html'
+
+Nydp.tests *ARGV.map(&:to_sym)

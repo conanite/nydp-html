@@ -1,0 +1,76 @@
+(register-test
+ '(suite "textile"
+         ("build a function to render a given textile string with the given arguments"
+         (pre-compile '(textile-build-function (context source callers) "hello %%context.name this file was in %%(just source.name)."))
+         (fn (context source callers)
+             (string-pieces "<p>hello " context.name " this file was in " source.name ".</p>")))
+
+         ("render a plain textile string to html"
+          (render-as-textile "h1. header text
+
+paragraph text
+
+* item 1
+* item 2
+")
+          "<h1>header text</h1>\n<p>paragraph text</p>\n<ul>\n\t<li>item 1</li>\n\t<li>item 2</li>\n</ul>")
+
+         ("compile a string with interpolations to an instruction to generate textile"
+                (compile-as-textile "h1. HEADER
+
+%%a and %%b and %%(c 3)
+
+* item %%(assign counter (+ counter 1))
+* item %%(assign counter (+ counter 1))
+* item %%(assign counter (+ counter 1))
+")
+
+                (string-pieces "<h1>HEADER</h1>\n<p>"
+                               a " and " b " and " (c 3)
+                               "</p>\n<ul>\n\t<li>item " (assign counter (+ counter 1))
+                               "</li>\n\t<li>item " (assign counter (+ counter 1))
+                               "</li>\n\t<li>item " (assign counter (+ counter 1))
+                               "</li>\n</ul>" nil))
+
+         ("compile a function invocation to render as textile"
+          (compile-as-textile a)
+          (textile-to-html a))
+
+         ("compile a plain string with no interpolations to an instruction to generate textile"
+                (compile-as-textile "h1. HEADER
+
+para
+
+* item 1
+* item 2
+")
+                "<h1>HEADER</h1>\n<p>para</p>\n<ul>\n\t<li>item 1</li>\n\t<li>item 2</li>\n</ul>")
+
+         ("compile a simple string with one interpolation to render html"
+          (compile-as-textile "hello %%name ")
+          (string-pieces "<p>hello " name "</p>"))
+
+         ("render a simple string with one interpolation to html"
+          (let name "conan"
+               (render-as-textile "hello %%name "))
+          "<p>hello conan</p>")
+
+         ("render a string with interpolations to html"
+          (with (a 1 b 2 c (fn (x) (* 2 x)) counter 0)
+                (render-as-textile "h1. HEADER
+
+%%a and %%b and %%(c 3)
+
+* item %%(assign counter (+ counter 1))
+* item %%(assign counter (+ counter 1))
+* item %%(assign counter (+ counter 1))
+"))
+
+          "<h1>HEADER</h1>\n<p>1 and 2 and 6</p>\n<ul>\n\t<li>item 1</li>\n\t<li>item 2</li>\n\t<li>item 3</li>\n</ul>")
+
+         ("render a string with interpolations to html"
+          (with (a "hello, world") (render-as-textile a))
+
+          "<p>hello, world</p>")
+
+))
