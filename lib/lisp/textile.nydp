@@ -25,7 +25,7 @@
 ;
 ; the most useful case:
 ;
-; (render-as-textile "hello %%(name)")
+; (render-as-textile "hello ~name")
 ;
 ; expands to :
 ;
@@ -35,7 +35,7 @@
 
 (def textile-process-parts (parts)
   (let separator (random-string 20)
-       (string-split (textile-to-html (joinstr "==%%(just separator)=="
+       (string-split (textile-to-html (joinstr "==~(just separator)=="
                                                parts))
                      separator)))
 
