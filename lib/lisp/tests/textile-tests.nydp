@@ -3,7 +3,12 @@
          ("build a function to render a given textile string with the given arguments"
          (pre-compile '(textile-build-function (a b c) "hello ~context.name this file was in ~(just source.name)."))
          (fn (a b c)
-             (string-pieces "<p>hello " (hash-get context 'name) " this file was in " (hash-get source 'name) ".</p>")))
+             (string-pieces
+              "<p>hello "
+              (interpolate (hash-get context 'name))
+              " this file was in "
+              (interpolate (hash-get source 'name))
+              ".</p>")))
 
          ("render a plain textile string to html"
           (render-as-textile "h1. header text
@@ -26,10 +31,10 @@ paragraph text
 ")
 
                 (string-pieces "<h1>HEADER</h1>\n<p>"
-                               a " and " b " and " (c 3)
-                               "</p>\n<ul>\n\t<li>item " (assign counter (+ counter 1))
-                               "</li>\n\t<li>item " (assign counter (+ counter 1))
-                               "</li>\n\t<li>item " (assign counter (+ counter 1))
+                               (interpolate a) " and " (interpolate b) " and " (interpolate (c 3))
+                               "</p>\n<ul>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
+                               "</li>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
+                               "</li>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
                                "</li>\n</ul>" nil))
 
          ("compile a function invocation to render as textile"
@@ -48,7 +53,7 @@ para
 
          ("compile a simple string with one interpolation to render html"
           (compile-as-textile "hello ~name ")
-          (string-pieces "<p>hello " name "</p>"))
+          (string-pieces "<p>hello " (interpolate name) "</p>"))
 
          ("render a simple string with one interpolation to html"
           (let name "conan"

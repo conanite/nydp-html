@@ -33,16 +33,23 @@
 ;
 ;
 
+(def interpolate (arg) arg)
+
 (def textile-process-parts (parts)
   (let separator (random-string 20)
-       (string-split (textile-to-html (joinstr "==~(just separator)=="
+       (string-split (textile-to-html (joinstr "==~{separator}=="
                                                parts))
                      separator)))
+
+(def textile-interpolatify-arg (tuple)
+     (if (cadr tuple)
+         `(interpolate ,(cadr tuple))
+         nil))
 
 (def build-textile-interpolator (pieces)
      (let tuples (pairs pieces)
           `(string-pieces ,@(apply + (zip (textile-process-parts (map car tuples))
-                                          (map cadr tuples))))))
+                                          (map textile-interpolatify-arg tuples))))))
 
 (mac compile-as-textile (arg)
      (if (isa 'string arg)
