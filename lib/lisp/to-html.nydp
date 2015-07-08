@@ -9,7 +9,7 @@
 ;
 ; (render-as-haml "%p hello world")                ;=> "<p>hello world</p>"
 ; (render-as-haml (get-some-text-from 'somewhere)) ;=> (haml-to-html (get-some-text-from 'somewhere))
-; (render-as-haml "hello ~name")                   ;=>  (string-pieces "<p>hello" name "<p>")
+; (render-as-haml "%p hello ~name")                ;=>  (string-pieces "<p>hello" name "<p>")
 ;
 
 (def interpolate (arg) arg)
