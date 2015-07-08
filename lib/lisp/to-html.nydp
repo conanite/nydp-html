@@ -1,0 +1,47 @@
+;
+; render-as-textile:
+;
+; (render-as-textile "hello world")                   ;=>  "<p>hello world</p>"
+; (render-as-textile (get-some-text-from 'somewhere)) ;=>  (textile-to-html (get-some-text-from 'somewhere))
+; (render-as-textile "hello ~name")                   ;=> (string-pieces "<p>hello" name "<p>")
+;
+; render-as-haml:
+;
+; (render-as-haml "%p hello world")                ;=> "<p>hello world</p>"
+; (render-as-haml (get-some-text-from 'somewhere)) ;=> (haml-to-html (get-some-text-from 'somewhere))
+; (render-as-haml "hello ~name")                   ;=>  (string-pieces "<p>hello" name "<p>")
+;
+
+(def interpolate (arg) arg)
+
+(def html-process-parts (parts converter)
+  (let separator (random-string 20)
+       (string-split (converter.method (joinstr "~(just converter.esc)~(just separator)~(just converter.esc)"
+                                               parts))
+                     separator)))
+
+(def html-interpolatify-arg (tuple)
+     (if (cadr tuple)
+         `(interpolate ,(cadr tuple))
+         nil))
+
+(def html-build-interpolator (pieces converter)
+     (let tuples (pairs pieces)
+          `(string-pieces ,@(apply + (zip (html-process-parts (map car tuples) converter)
+                                          (map html-interpolatify-arg tuples))))))
+
+(mac render-as-haml (arg)
+     (if (isa 'string arg)
+         (haml-to-html arg)
+         (and (pair? arg)
+              (eq? 'string-pieces (car arg)))
+         (html-build-interpolator (cdr arg) { method haml-to-html esc "" })
+         `(haml-to-html ,arg)))
+
+(mac render-as-textile (arg)
+     (if (isa 'string arg)
+         (textile-to-html arg)
+         (and (pair? arg)
+              (eq?   'string-pieces (car arg)))
+         (html-build-interpolator (cdr arg) { method textile-to-html esc "==" })
+         `(textile-to-html ,arg)))

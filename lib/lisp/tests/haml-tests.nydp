@@ -1,0 +1,101 @@
+(register-test
+ '(suite "haml"
+         ("build a function to render a given haml string with the given arguments"
+          (pre-compile '(render-as-haml ".funny#my-id hello ~context.name this file was in ~(just source.name)."))
+          (string-pieces
+           "<div class='funny' id='my-id'>hello "
+           (interpolate (hash-get context 'name))
+           " this file was in "
+           (interpolate (hash-get source 'name))
+           ".</div>\n"))
+
+         ("render a plain haml string to html"
+          (render-as-haml "%h1 header text
+
+%p paragraph text
+
+%ul
+  %li item 1
+  %li item 2
+")
+          "<h1>header text</h1>
+<p>paragraph text</p>
+<ul>
+  <li>item 1</li>
+  <li>item 2</li>
+</ul>\n")
+
+         ("compile a string with interpolations to an instruction to generate haml"
+          (pre-compile '(render-as-haml "%h1 HEADER
+
+%p ~a and ~b and ~(c 3)
+
+%ul
+  %li item ~(assign counter (+ counter 1))
+  %li item ~(assign counter (+ counter 1))
+  %li item ~(assign counter (+ counter 1))
+"))
+
+          (string-pieces "<h1>HEADER</h1>\n<p>"
+                         (interpolate a) " and " (interpolate b) " and " (interpolate (c 3))
+                         "</p>\n<ul>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                         "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                         "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                         "</li>\n</ul>\n" nil))
+
+         ("compile a function invocation to render as haml"
+          (pre-compile '(render-as-haml a))
+          (haml-to-html a))
+
+         ("compile a plain string with no interpolations to an instruction to generate haml"
+          (pre-compile '(render-as-haml "%h1 HEADER
+
+%p para
+
+%ul
+  %li item 1
+  %li item 2
+"))
+          "<h1>HEADER</h1>
+<p>para</p>
+<ul>
+  <li>item 1</li>
+  <li>item 2</li>
+</ul>
+")
+
+         ("compile a simple string with one interpolation to render html"
+          (pre-compile '(render-as-haml "hello ~name "))
+          (string-pieces "hello " (interpolate name) "\n"))
+
+         ("render a simple string with one interpolation to html"
+          (let name "conan"
+               (render-as-haml "hello ~name"))
+          "hello conan\n")
+
+         ("render a string with interpolations to html"
+          (with (a 1 b 2 c (fn (x) (* 2 x)) counter 0)
+                (render-as-haml "%h1 HEADER
+
+%p ~a and ~b and ~(c 3)
+
+%ul
+  %li item ~(assign counter (+ counter 1))
+  %li item ~(assign counter (+ counter 1))
+  %li item ~(assign counter (+ counter 1))
+"))
+
+          "<h1>HEADER</h1>
+<p>1 and 2 and 6</p>
+<ul>
+  <li>item 1</li>
+  <li>item 2</li>
+  <li>item 3</li>
+</ul>
+")
+
+         ("render a variable to html"
+          (with (a "%p hello, world") (render-as-haml a))
+
+          "<p>hello, world</p>\n")
+))

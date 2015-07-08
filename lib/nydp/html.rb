@@ -1,3 +1,4 @@
+require "haml"
 require "redcloth"
 require "nydp"
 require "nydp/literal"
@@ -16,7 +17,7 @@ module Nydp
       end
 
       def loadfiles
-        b = relative_path('../lisp/textile.nydp')
+        b = relative_path('../lisp/to-html.nydp')
         [b]
       end
 
@@ -26,6 +27,27 @@ module Nydp
 
       def setup ns
         Symbol.mk("textile-to-html",  ns).assign(Nydp::Html::TextileToHtml.new)
+        Symbol.mk("haml-to-html",     ns).assign(Nydp::Html::HamlToHtml.new)
+      end
+    end
+
+    class HamlToHtml
+      def convert_from_haml convertible
+        Haml::Engine.new(convertible, suppress_eval: true).render
+      rescue Exception => e
+        if e.line
+          lines = convertible.split(/\n/)
+          beginning = e.line - 2
+          beginning = 0 if beginning < 0
+          selection = lines[beginning...(e.line + 1)].join "\n"
+          "#{e.message}<br/>line #{e.line}<br/><br/><pre>#{selection}</pre>"
+        else
+          e.message
+        end
+      end
+
+      def invoke vm, args
+        vm.push_arg Nydp::StringAtom.new convert_from_haml(args.car.to_s)
       end
     end
 
