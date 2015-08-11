@@ -94,6 +94,31 @@
 </ul>
 ")
 
+         ("render a string with nested haml to html"
+          (with (a (list 1 2 3) b "hello")
+                (render-as-haml "%h1 HEADER
+
+%p ~b world
+
+~(mapx a x (render-as-haml "
+  .x<
+    this x is ~x
+  .y<
+    and y is ~(* 2 x)
+"))
+"))
+
+          "<h1>HEADER</h1>
+<p>hello world</p>
+<div class='x'>this x is 1</div>
+<div class='y'>and y is 2</div>
+<div class='x'>this x is 2</div>
+<div class='y'>and y is 4</div>
+<div class='x'>this x is 3</div>
+<div class='y'>and y is 6</div>
+
+")
+
          ("render a variable to html"
           (with (a "%p hello, world") (render-as-haml a))
 

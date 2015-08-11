@@ -32,8 +32,17 @@ module Nydp
     end
 
     class HamlToHtml
+      def normalise_indentation txt
+        lines = txt.split(/\n/).select { |line| line.strip != "" }
+        return txt if lines.length == 0
+        indentation = /^ +/.match(lines.first)
+        return txt unless indentation
+        indentation = indentation.to_s
+        txt.gsub(/^#{indentation}/, "")
+      end
+
       def convert_from_haml convertible
-        Haml::Engine.new(convertible, suppress_eval: true).render
+        Haml::Engine.new(normalise_indentation(convertible), suppress_eval: true).render
       rescue Exception => e
         if e.line
           lines = convertible.split(/\n/)
