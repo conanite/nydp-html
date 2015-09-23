@@ -19,13 +19,12 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.7"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake",    "~> 10.0"
 
   spec.add_development_dependency 'rspec', '~> 2.9'
   spec.add_development_dependency 'rspec_numbering_formatter'
 
-  spec.add_dependency             'nydp'
-  spec.add_dependency             'haml'
+  spec.add_dependency             'nydp',    '~> 0.0.12'
+  spec.add_dependency             'haml',    '~> 4.0'
   spec.add_dependency             'RedCloth'
-
 end

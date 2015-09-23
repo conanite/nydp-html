@@ -2,6 +2,7 @@ require "haml"
 require "redcloth"
 require "nydp"
 require "nydp/literal"
+require "nydp/builtin"
 require "nydp/html/version"
 
 module Nydp
@@ -32,6 +33,7 @@ module Nydp
     end
 
     class HamlToHtml
+      include Nydp::Builtin::Base
       def normalise_indentation txt
         lines = txt.split(/\n/).select { |line| line.strip != "" }
         return txt if lines.length == 0
@@ -55,13 +57,14 @@ module Nydp
         end
       end
 
-      def invoke vm, args
+      def builtin_invoke vm, args
         vm.push_arg Nydp::StringAtom.new convert_from_haml(args.car.to_s)
       end
     end
 
     class TextileToHtml
-      def invoke vm, args
+      include Nydp::Builtin::Base
+      def builtin_invoke vm, args
         src = args.car.to_s
         rc = RedCloth.new(src)
         rc.no_span_caps = true
