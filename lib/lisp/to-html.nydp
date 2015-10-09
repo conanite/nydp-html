@@ -45,3 +45,21 @@
               (eq?   'string-pieces (car arg)))
          (html-build-interpolator (cdr arg) { method textile-to-html esc "==" })
          `(textile-to-html ,arg)))
+
+(def to-css-rule (prop val) (joinstr "" prop ":" val ";"))
+
+(def to-css (hsh)
+  (and hsh
+       (joinstr "" (map (fn (k) (to-css-rule k hsh.,k))
+                        (hash-keys hsh)))))
+
+(def as-tag-attrs (attrs)
+  (let hsh (or attrs (hash))
+    (joinstr ""
+             (map (fn (k) " ~|k|='~(joinstr " " hsh.,k)'")
+                  (hash-keys hsh)))))
+
+(def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
+(def html-tag (name attrs . content) "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" content)</~|name|>")
+(def img (src)                (html-tag/ "img" { src src }))
+(def link-to (txt path attrs) (html-tag "a" { href path } txt))
