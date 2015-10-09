@@ -15,4 +15,4 @@
     (suite "a"
            ("returns an anchor tag"
             (link-to "click here!" "/other-page.html" { class "turbo" })
-            "<a href='/other-page.html'>click here!</a>"))))
+            "<a href='/other-page.html' class='turbo'>click here!</a>"))))

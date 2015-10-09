@@ -62,4 +62,4 @@
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
 (def html-tag (name attrs . content) "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" content)</~|name|>")
 (def img (src)                (html-tag/ "img" { src src }))
-(def link-to (txt path attrs) (html-tag "a" { href path } txt))
+(def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } attrs) txt))
