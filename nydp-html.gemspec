@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Conan Dalton"]
   spec.email         = ["conan@conandalton.net"]
   spec.summary       = %q{nydp interface for HAML and Textile}
-  spec.description   = %q{provides 'render-textile-to-html and 'render-haml-to-html functions}
+  spec.description   = %q{provides 'render-as-haml and 'render-as-textile functions}
   spec.homepage      = "http://github.com/conanite/nydp-html"
   spec.license       = "MIT"
 
@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 2.9'
   spec.add_development_dependency 'rspec_numbering_formatter'
 
-  spec.add_dependency             'nydp',    '~> 0.0.12'
+  spec.add_dependency             'nydp',    '~> 0.1'
   spec.add_dependency             'haml',    '~> 4.0'
   spec.add_dependency             'RedCloth'
 end
