@@ -62,6 +62,35 @@ interpolations, don't be inhibited:
 
 ```
 
+`'nydp-html` also provides haml-like expressions in lisp. Here are some examples from the spec:
+
+```lisp
+   (%p "hello, world")
+   "<p>hello, world</p>"
+
+   (%p "hello " (%b "you") " over " (%i "there"))
+   "<p>hello <b>you</b> over <i>there</i></p>"
+
+   (%p "hello " (%b.thick "you") " over " (%i "there"))
+   "<p>hello <b class='thick'>you</b> over <i>there</i></p>"
+```
+
+here's a slightly more intricate example:
+
+```lisp
+(%tr (map λd(%th.calendar-column d)
+          '(mon tue wed thu fri sat sun)))
+"<tr>
+  <th class='calendar-column'>mon</th>
+  <th class='calendar-column'>tue</th>
+  <th class='calendar-column'>wed</th>
+  <th class='calendar-column'>thu</th>
+  <th class='calendar-column'>fri</th>
+  <th class='calendar-column'>sat</th>
+  <th class='calendar-column'>sun</th>
+</tr>"
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/nydp-html/fork )
