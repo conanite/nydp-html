@@ -62,4 +62,24 @@
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
 (def html-tag (name attrs . content) "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" content)</~|name|>")
 (def img (src)                (html-tag/ "img" { src src }))
-(def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } attrs) txt))
+(def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } (or attrs (hash))) txt))
+(def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
+
+(def build-html-tag-fn (tagname attrs)
+  `(curry html-tag ',tagname (brace-list ,@attrs)))
+
+(def html-percent-syntax (tagname attrs)
+  (if (caris 'dot-syntax tagname)
+      (let dot-params (cdr tagname)
+        (build-html-tag-fn (car dot-params)
+                           (+ `(class ,(joinstr " " (cdr dot-params))) attrs)))
+      (build-html-tag-fn tagname attrs)))
+
+(mac percent-syntax names
+  (html-percent-syntax (cadr names) nil))
+
+(define-prefix-list-macro "^%.+" vars expr
+  ; allows (%a(href "/fr/index") "click" name)
+  ; as shortcut for (html-tag "a" { href "/fr/index" } "click " name)
+  (let tag-name (car:parse:joinstr "" (cdr:string-split vars))
+    (html-percent-syntax tag-name expr)))

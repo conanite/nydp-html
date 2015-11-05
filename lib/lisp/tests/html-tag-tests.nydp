@@ -16,3 +16,35 @@
            ("returns an anchor tag"
             (link-to "click here!" "/other-page.html" { class "turbo" })
             "<a href='/other-page.html' class='turbo'>click here!</a>"))))
+
+(examples-for percent-syntax
+  ("generates a simple html tag"
+   (%p "hello, world")
+   "<p>hello, world</p>")
+
+  ("generates nested html tags"
+   (%p "hello " (%b "you") " over " (%i "there"))
+   "<p>hello <b>you</b> over <i>there</i></p>")
+
+  ("generates html tags with classnames"
+   (%p "hello " (%b.thick "you") " over " (%i "there"))
+   "<p>hello <b class='thick'>you</b> over <i>there</i></p>"))
+
+(examples-for prefix-list
+  ("generates a simple html tag with attributes"
+    (%a(href "/fr/index") "click here")
+    "<a href='/fr/index'>click here</a>")
+
+  ("generates nested html tags with attributes"
+   (%p(class 'important)
+      "read this and "
+      (%a(href "/fr/index") "click here")
+      "!")
+    "<p class='important'>read this and <a href='/fr/index'>click here</a>!</p>")
+
+  ("generates nested html tags with classnames and other attributes"
+   (%p(class 'important)
+      "read this and "
+      (%a.wow(href "/fr/index") "click here")
+      "!")
+    "<p class='important'>read this and <a class='wow' href='/fr/index'>click here</a>!</p>"))
