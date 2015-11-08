@@ -66,7 +66,7 @@
 (def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
 
 (def build-html-tag-fn (tagname attrs)
-  `(curry html-tag ',tagname (brace-list ,@attrs)))
+  `(curry html-tag ',tagname ,(if attrs `(brace-list ,@attrs))))
 
 (def html-percent-syntax (tagname attrs)
   (if (caris 'dot-syntax tagname)

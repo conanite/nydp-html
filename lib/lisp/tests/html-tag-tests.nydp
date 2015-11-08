@@ -28,7 +28,15 @@
 
   ("generates html tags with classnames"
    (%p "hello " (%b.thick "you") " over " (%i "there"))
-   "<p>hello <b class='thick'>you</b> over <i>there</i></p>"))
+   "<p>hello <b class='thick'>you</b> over <i>there</i></p>")
+
+  ("generates html tags with multiple classnames"
+   (%p "hello " (%b.thick.dense "you") " over " (%i "there"))
+   "<p>hello <b class='thick dense'>you</b> over <i>there</i></p>")
+
+  ("does not insert empty 'brace-list for no attributes"
+   (pre-compile '(%p foo))
+   ((curry html-tag (quote p) nil) foo)))
 
 (examples-for prefix-list
   ("generates a simple html tag with attributes"
