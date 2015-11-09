@@ -1,0 +1,62 @@
+(def helpful/type (thing)
+  (if (no thing)
+      "nil"
+      (let type (type-of thing)
+        (if (string-match type "ruby/Hash")
+            'ruby-hash
+            (string-match type "ruby/")
+            'object
+            type))))
+
+(def helpful/info (thing)
+  ; tries to say something useful about the 'thing
+  (if (no thing)
+      "nil"
+      (pair? thing)
+      "list with ~(len thing) elements, first is a ~(helpful/type:car thing)"
+      (let mytype (helpful/type thing)
+        (if (or (eq? mytype 'hash)
+                (eq? mytype 'ruby-hash)
+                (eq? mytype 'object))
+            (joinstr "\n"
+                     (map λk(joinstr " -> " k (helpful/type thing.,k))
+                          (hash-keys thing)))
+            "~(inspect thing) is a ~(helpful/type thing)"))))
+
+(def helpful/index ()
+  ; return the names and types of all the things that are documented
+  (joinstr "\n"
+           (map (curry inspect:firstn 2)
+                (collect dox-with-documentation (dox-all-items)))))
+
+(mac helpful/dox (name)
+  ; finds documentation for the named thing
+  `(let infos (dox-lookup ',name)
+     (if (no infos)
+         (joinstr " : " ,(pp name) (helpful/info ,name))
+         (joinstr "\n\n"
+                  (map λi(apply dox-show-info i)
+                       infos)))))
+
+(def helpful/examples (name)
+  ; finds examples that have been defined for the given 'name
+  (let examples (dox-examples name)
+    (if examples
+        (joinstr "\n"
+                 (map (curry dox-show-examples name)
+                      examples)))))
+
+(mac help (thing)
+  ; returns helpful information about the thing
+  ; if thing is nil, show what help is available for
+  `(%pre.helpful ,(if (no thing)
+                      `(helpful/index)
+                      `(joinstr "\n\n"
+                                (helpful/dox ,thing)
+                                (helpful/examples ',thing)))))
+
+(def-colon-syntax help names
+  (let target (cadr names)
+    `(help ,(if (eq? target '||)
+                nil
+                target))))
