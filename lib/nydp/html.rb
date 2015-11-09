@@ -18,8 +18,7 @@ module Nydp
       end
 
       def loadfiles
-        b = relative_path('../lisp/to-html.nydp')
-        [b]
+        Dir.glob(relative_path '../lisp/html-*.nydp').sort
       end
 
       def testfiles
