@@ -1,0 +1,40 @@
+;; this function and the following example are used as test-cases in examples-for help
+(def test-example-f (foo)
+  ; more than just foo
+  (+ 2 foo))
+
+(examples-for test-example-f
+  ("adds two"
+   (test-example-f 99)
+   101))
+
+(examples-for help
+  ("returns dox and examples for the given name"
+   help:test-example-f
+   "<pre class='helpful'>Function : test-example-f
+
+args : (foo)
+
+more than just foo
+
+source
+======
+(def test-example-f (foo)
+    (+ 2 foo))
+
+
+
+Examples for test-example-f
+==================
+
+test-example-f adds two
+
+running  :
+(test-example-f 99)
+
+produces : 101
+
+--------------------------------
+
+
+</pre>"))
