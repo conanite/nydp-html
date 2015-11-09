@@ -1,21 +1,19 @@
-(register-test
- '(suite "html-tag functions"
-    (suite "html-tag"
-           ("returns a html string"
-            (html-tag "div" { class 'yellow style (to-css { border "1px solid blue" font-size "3em" }) }
-                      (html-tag "h1" nil "Welcome")
-                      (html-tag "p" { class "yadda" } "blah blah"))
-            "<div class='yellow' style='border:1px solid blue;font-size:3em;'><h1>Welcome</h1><p class='yadda'>blah blah</p></div>"))
+(examples-for html-tag
+  ("returns a html string"
+   (html-tag "div" { class 'yellow style (to-css { border "1px solid blue" font-size "3em" }) }
+             (html-tag "h1" nil "Welcome")
+             (html-tag "p" { class "yadda" } "blah blah"))
+   "<div class='yellow' style='border:1px solid blue;font-size:3em;'><h1>Welcome</h1><p class='yadda'>blah blah</p></div>"))
 
-    (suite "img"
-           ("returns an img tag"
-            (img "/assets/face.png")
-            "<img src='/assets/face.png'/>"))
+(examples-for img
+  ("returns an img tag"
+   (img "/assets/face.png")
+   "<img src='/assets/face.png'/>"))
 
-    (suite "a"
-           ("returns an anchor tag"
-            (link-to "click here!" "/other-page.html" { class "turbo" })
-            "<a href='/other-page.html' class='turbo'>click here!</a>"))))
+(examples-for a
+  ("returns an anchor tag"
+   (link-to "click here!" "/other-page.html" { class "turbo" })
+   "<a href='/other-page.html' class='turbo'>click here!</a>"))
 
 (examples-for percent-syntax
   ("generates a simple html tag"
