@@ -1,17 +1,3 @@
-;
-; render-as-textile:
-;
-; (render-as-textile "hello world")                   ;=>  "<p>hello world</p>"
-; (render-as-textile (get-some-text-from 'somewhere)) ;=>  (textile-to-html (get-some-text-from 'somewhere))
-; (render-as-textile "hello ~name")                   ;=> (string-pieces "<p>hello" name "<p>")
-;
-; render-as-haml:
-;
-; (render-as-haml "%p hello world")                ;=> "<p>hello world</p>"
-; (render-as-haml (get-some-text-from 'somewhere)) ;=> (haml-to-html (get-some-text-from 'somewhere))
-; (render-as-haml "%p hello ~name")                ;=>  (string-pieces "<p>hello" name "<p>")
-;
-
 (def interpolate (arg) arg)
 
 (def html-process-parts (parts converter)
@@ -31,6 +17,12 @@
                                           (map html-interpolatify-arg tuples))))))
 
 (mac render-as-haml (arg)
+     ; produce code to convert 'arg to html using a haml interpreter
+     ; for example:
+     ;
+     ; (render-as-haml "%p hello world")                ;=> "<p>hello world</p>"
+     ; (render-as-haml (get-some-text-from 'somewhere)) ;=> (haml-to-html (get-some-text-from 'somewhere))
+     ; (render-as-haml "%p hello ~name")                ;=>  (string-pieces "<p>hello" name "<p>")
      (if (isa 'string arg)
          (haml-to-html arg)
          (and (pair? arg)
@@ -39,6 +31,12 @@
          `(haml-to-html ,arg)))
 
 (mac render-as-textile (arg)
+     ; produces code to convert 'arg to html using a textile interpreter
+     ; for example:
+     ;
+     ; (render-as-textile "hello world")                   ;=>  "<p>hello world</p>"
+     ; (render-as-textile (get-some-text-from 'somewhere)) ;=>  (textile-to-html (get-some-text-from 'somewhere))
+     ; (render-as-textile "hello ~name")                   ;=> (string-pieces "<p>hello" name "<p>")
      (if (isa 'string arg)
          (textile-to-html arg)
          (and (pair? arg)
@@ -49,6 +47,15 @@
 (def to-css-rule (prop val) (joinstr "" prop ":" val ";"))
 
 (def to-css (hsh)
+  ; convert given 'hsh to a CSS string. Keys of 'hsh are
+  ; css properties; the corresponding values are css values.
+  ;
+  ; example:
+  ; (to-css { background "black" font-size "12px" })
+  ;
+  ; produces
+  ; "background:black;font-size:12px;"
+  ;
   (and hsh
        (joinstr "" (map (fn (k) (to-css-rule k hsh.,k))
                         (hash-keys hsh)))))

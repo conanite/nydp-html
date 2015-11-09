@@ -30,6 +30,10 @@
    (%p "hello " (%b.thick "you") " over " (%i "there"))
    "<p>hello <b class='thick'>you</b> over <i>there</i></p>")
 
+  ("concatenates content"
+   (%p (map λx(%span.hello x) '(a b c)))
+   "<p><span class='hello'>a</span><span class='hello'>b</span><span class='hello'>c</span></p>")
+
   ("generates html tags with multiple classnames"
    (%p "hello " (%b.thick.dense "you") " over " (%i "there"))
    "<p>hello <b class='thick dense'>you</b> over <i>there</i></p>")
