@@ -9,6 +9,21 @@
    101))
 
 (examples-for help
+  ("describes its argument when it's a number"
+   help:22
+   "<pre class='helpful'>22 : 22 is a number\n\n</pre>")
+
+  ("describes its argument when it's a string"
+   (help "hello world")
+   "<pre class='helpful'>\"hello world\" : \"hello world\" is a string\n\n</pre>")
+
+  ("describes its argument when it's a hash"
+   (let paris { a 1 b 2 c { x 9 y 8 z 7 } }
+     (help paris))
+   "<pre class='helpful'>paris : {a=>1, b=>2, c=>{x=>9, y=>8, z=>7}} is a hash<div class='keyhelp'><div class='key'>a</div>-&gt;<div class='keyvalue'>number</div></div><div class='keyhelp'><div class='key'>b</div>-&gt;<div class='keyvalue'>number</div></div><div class='keyhelp'><div class='key'>c</div>-&gt;<div class='keyvalue'>hash</div></div>
+
+</pre>")
+
   ("returns dox and examples for the given name"
    help:test-example-f
    "<pre class='helpful'>Function : test-example-f
