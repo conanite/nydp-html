@@ -16,13 +16,32 @@
           `(string-pieces ,@(apply + (zip (html-process-parts (map car tuples) converter)
                                           (map html-interpolatify-arg tuples))))))
 
+(mac render-as-html (arg)
+     ; produce code to convert 'arg to html using a null interpreter.
+     ; in other words, assume input is already html. Normally, we would
+     ; just return the argument, but it's useful to take advantage of the fact that
+     ; each interpolation ~(foo) is replaced with ~(interpolate (foo)), and
+     ; you may override 'interpolate for your own nefarious purposes.
+     ;
+     ; for example:
+     ;
+     ; (render-as-html "<p>hello world</p>")            ;=> "<p>hello world</p>"
+     ; (render-as-html (get-some-text-from 'somewhere)) ;=> (x1 (get-some-text-from 'somewhere))
+     ; (render-as-html "<p>hello ~|name|</p>")          ;=>  (string-pieces "<p>hello" (interpolate name) "<p>")
+     (if (isa 'string arg)
+         arg
+         (and (pair? arg)
+              (eq? 'string-pieces (car arg)))
+         (html-build-interpolator (cdr arg) { method x1 esc "" })
+         arg))
+
 (mac render-as-haml (arg)
      ; produce code to convert 'arg to html using a haml interpreter
      ; for example:
      ;
      ; (render-as-haml "%p hello world")                ;=> "<p>hello world</p>"
      ; (render-as-haml (get-some-text-from 'somewhere)) ;=> (haml-to-html (get-some-text-from 'somewhere))
-     ; (render-as-haml "%p hello ~name")                ;=>  (string-pieces "<p>hello" name "<p>")
+     ; (render-as-haml "%p hello ~name")                ;=>  (string-pieces "<p>hello" (interpolate name) "<p>")
      (if (isa 'string arg)
          (haml-to-html arg)
          (and (pair? arg)
@@ -36,7 +55,7 @@
      ;
      ; (render-as-textile "hello world")                   ;=>  "<p>hello world</p>"
      ; (render-as-textile (get-some-text-from 'somewhere)) ;=>  (textile-to-html (get-some-text-from 'somewhere))
-     ; (render-as-textile "hello ~name")                   ;=> (string-pieces "<p>hello" name "<p>")
+     ; (render-as-textile "hello ~name")                   ;=> (string-pieces "<p>hello" (interpolate name) "<p>")
      (if (isa 'string arg)
          (textile-to-html arg)
          (and (pair? arg)

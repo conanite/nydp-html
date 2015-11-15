@@ -1,0 +1,25 @@
+(examples-for render-as-html
+  ("return the same string if there are no interpolations"
+   (pre-compile '(render-as-html "<p>hello, nydp</p>"))
+   "<p>hello, nydp</p>")
+
+  ("return the same thing if there are no interpolations"
+   (pre-compile '(render-as-html (foo bar yobo)))
+   (foo bar yobo))
+
+  ("compile a string with interpolations to an instruction to generate haml"
+   (pre-compile '(render-as-html "<h1>HEADER</h1>
+<p>~a and ~b and ~(c 3)</p>
+<ul>
+  <li>item ~(assign counter (+ counter 1))</li>
+  <li>item ~(assign counter (+ counter 1))</li>
+  <li>item ~(assign counter (+ counter 1))</li>
+</ul>
+"))
+
+   (string-pieces "<h1>HEADER</h1>\n<p>"
+                  (interpolate a) " and " (interpolate b) " and " (interpolate (c 3))
+                  "</p>\n<ul>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                  "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                  "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
+                  "</li>\n</ul>\n" nil)))
