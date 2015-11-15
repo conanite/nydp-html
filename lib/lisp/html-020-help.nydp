@@ -25,7 +25,7 @@
       "list with ~(len thing) elements, first is a ~(helpful/type:car thing)"
       (with (mytype (helpful/type thing)
              mykeys (hash-keys thing))
-            "~(pp thing) is a ~|mytype|~(helpful/keys thing)")))
+            "is a ~|mytype|~(helpful/keys thing)")))
 
 (def helpful/index ()
   ; return the names and types of all the things that are documented
