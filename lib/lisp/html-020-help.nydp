@@ -42,13 +42,20 @@
                   (map λi(apply dox-show-info i)
                        infos)))))
 
+(def helpful/show-examples (name examples)
+  (if examples
+      (%div.helpful-examples
+            (%h2 "Examples for "
+                 (%span.example-name name))
+            (map λk(map λx(%pre.helpful-example
+                                (dox-show-one-example name x))
+                        k)
+                 examples))))
+
 (def helpful/examples (name)
   ; finds examples that have been defined for the given 'name
-  (let examples (dox-examples name)
-    (if examples
-        (joinstr "\n"
-                 (map (curry dox-show-examples name)
-                      examples)))))
+  (helpful/show-examples name
+                         (dox-examples name)))
 
 (mac help (thing)
   ; returns helpful information about the thing

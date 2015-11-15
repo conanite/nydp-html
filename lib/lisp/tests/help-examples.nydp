@@ -4,9 +4,23 @@
   (+ 2 foo))
 
 (examples-for test-example-f
-  ("adds two"
+  ("adds two to 99"
    (test-example-f 99)
-   101))
+   101)
+
+  ("adds two and two"
+   (test-example-f 2)
+   4))
+
+;; do this again to try confuse helpful/examples
+(examples-for test-example-f
+  ("adds two to 45"
+   (test-example-f 45)
+   47)
+
+  ("adds two and seven"
+   (test-example-f 7)
+   9))
 
 (examples-for help
   ("describes its argument when it's a number"
@@ -38,18 +52,40 @@ source
     (+ 2 foo))
 
 
+<div class='helpful-examples'><h2>Examples for <span class='example-name'>test-example-f</span></h2><pre class='helpful-example'>test-example-f adds two to 45
 
-Examples for test-example-f
-==================
+example  :
 
-test-example-f adds two
+(test-example-f 45)
 
-running  :
-(test-example-f 99)
-
-produces : 101
+returns : 47
 
 --------------------------------
+</pre><pre class='helpful-example'>test-example-f adds two and seven
 
+example  :
 
-</pre>"))
+(test-example-f 7)
+
+returns : 9
+
+--------------------------------
+</pre><pre class='helpful-example'>test-example-f adds two to 99
+
+example  :
+
+(test-example-f 99)
+
+returns : 101
+
+--------------------------------
+</pre><pre class='helpful-example'>test-example-f adds two and two
+
+example  :
+
+(test-example-f 2)
+
+returns : 4
+
+--------------------------------
+</pre></div></pre>"))
