@@ -1,4 +1,14 @@
-(def interpolate (arg) arg)
+(def default-format (arg)
+  ; override this to ensure values are formatted
+  ; as you desire it. By default, this returns its
+  ; argument unchanged
+  arg)
+
+(def interpolate (arg)
+  ; override this to provide error handling, logging,
+  ; profiling, or whatever it is you might desire.
+  ; by default, this delegates to 'default-format
+  (default-format arg))
 
 (def html-process-parts (parts converter)
   (let separator (random-string 20)
@@ -86,7 +96,9 @@
                   (hash-keys hsh)))))
 
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
-(def html-tag (name attrs . content) "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" content)</~|name|>")
+(def html-tag (name attrs . content)
+  (let formatted (map default-format content)
+    "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" formatted)</~|name|>"))
 (def img (src)                (html-tag/ "img" { src src }))
 (def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } (or attrs (hash))) txt))
 (def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
