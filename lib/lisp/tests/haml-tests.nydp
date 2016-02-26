@@ -41,7 +41,7 @@
                          "</p>\n<ul>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                          "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                          "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
-                         "</li>\n</ul>\n" nil))
+                         "</li>\n</ul>\n"))
 
          ("compile a function invocation to render as haml"
           (pre-compile '(render-as-haml a))
@@ -92,6 +92,17 @@
   <li>item 2</li>
   <li>item 3</li>
 </ul>
+")
+
+         ("render correctly even when HAML re-orders attributes"
+          (with (a 'big b 'little c "http://link")
+                (render-as-haml "
+%a(href='~|c|' class='~|a|' alt='~|b|')
+  %img(src='~|c|' alt='~|b|' title='~|a|')
+"))
+          "<a alt='little' class='big' href='http://link'>
+  <img alt='little' src='http://link' title='big'>
+</a>
 ")
 
          ("render a string with nested haml to html"

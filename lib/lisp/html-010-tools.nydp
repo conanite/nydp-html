@@ -10,21 +10,31 @@
   ; by default, this delegates to 'default-format
   (default-format arg))
 
-(def html-process-parts (parts converter)
-  (let separator (random-string 20)
-       (string-split (converter.method (joinstr "~(just converter.esc)~(just separator)~(just converter.esc)"
-                                               parts))
-                     separator)))
+(def html-resplit (parts hsh)
+  (accum splot
+         (each part parts
+               (splot (or (hash-get hsh part)
+                          part)))))
 
-(def html-interpolatify-arg (tuple)
-     (if (cadr tuple)
-         `(interpolate ,(cadr tuple))
-         nil))
+(def html-split-fn (seq sep hsh esc)
+  (fn (piece)
+      (if (isa 'string piece)
+          piece
+          (let key (j "--l--" (seq) "--r--")
+            (hash-set hsh key `(interpolate ,piece))
+            (j esc sep key sep esc)))))
+
+(def html-process-parts (parts converter)
+  (with (hsh  (hash)
+         sep  (random-string 12))
+        (html-resplit (string-split (converter.method
+                                               (j:map (html-split-fn (seqf 0) sep hsh converter.esc)
+                                                  parts))
+                                    sep)
+                      hsh)))
 
 (def html-build-interpolator (pieces converter)
-     (let tuples (pairs pieces)
-          `(string-pieces ,@(apply + (zip (html-process-parts (map car tuples) converter)
-                                          (map html-interpolatify-arg tuples))))))
+  `(string-pieces ,@(html-process-parts pieces converter)))
 
 (mac render-as-html (arg)
      ; produce code to convert 'arg to html using a null interpreter.

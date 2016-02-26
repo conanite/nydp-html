@@ -3,7 +3,7 @@
    (html-build-interpolator (list "<h1>" '(foo 1 2 3) "</h1>")
                             { method (curry string-replace "h1" "HEADER-1")
                               esc "" })
-   (string-pieces "<HEADER-1>" (interpolate (foo 1 2 3)) "</HEADER-1>" nil)))
+   (string-pieces "<HEADER-1>" (interpolate (foo 1 2 3)) "</HEADER-1>")))
 
 (examples-for render-as-html
   ("return the same string if there are no interpolations"
@@ -29,4 +29,4 @@
                   "</p>\n<ul>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                   "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                   "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
-                  "</li>\n</ul>\n" nil)))
+                  "</li>\n</ul>\n")))

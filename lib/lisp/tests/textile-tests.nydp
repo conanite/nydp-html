@@ -34,7 +34,7 @@ paragraph text
                          "</p>\n<ul>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
                          "</li>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
                          "</li>\n\t<li>item " (interpolate (assign counter (+ counter 1)))
-                         "</li>\n</ul>" nil))
+                         "</li>\n</ul>"))
 
          ("compile a function invocation to render as textile"
           (pre-compile '(render-as-textile a))
