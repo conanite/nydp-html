@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 2.9'
   spec.add_development_dependency 'rspec_numbering_formatter'
 
-  spec.add_dependency             'nydp',    ['~> 0.1', '>= 0.1.7']
+  spec.add_dependency             'nydp',    ['~> 0.1', '>= 0.1.13']
   spec.add_dependency             'haml',    '~> 4.0'
   spec.add_dependency             'RedCloth'
 end
