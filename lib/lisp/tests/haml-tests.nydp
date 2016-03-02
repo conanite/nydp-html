@@ -43,6 +43,20 @@
                          "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                          "</li>\n</ul>\n"))
 
+         ("compile a string with interpolations inside embedded textile to an instruction to generate haml"
+          (pre-compile '(render-as-haml "%h1 HEADER
+
+:textile
+  * a is ~a
+  * b is ~b
+  * c is ~(c 3)
+"))
+
+          (string-pieces "<h1>HEADER</h1>\n<ul>\n\t<li>a is " (interpolate a)
+                         "</li>\n\t<li>b is " (interpolate b)
+                         "</li>\n\t<li>c is " (interpolate (c 3))
+                         "</li>\n</ul>\n"))
+
          ("compile a function invocation to render as haml"
           (pre-compile '(render-as-haml a))
           (haml-to-html a))

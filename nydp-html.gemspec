@@ -26,5 +26,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency             'nydp',    ['~> 0.1', '>= 0.1.13']
   spec.add_dependency             'haml',    '~> 4.0'
+  spec.add_dependency             'haml-contrib'
   spec.add_dependency             'RedCloth'
 end

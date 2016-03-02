@@ -20,7 +20,7 @@
   (fn (piece)
       (if (isa 'string piece)
           piece
-          (let key (j "--l--" (seq) "--r--")
+          (let key (j "hsf:" (seq) ":hsf")
             (hash-set hsh key `(interpolate ,piece))
             (j esc sep key sep esc)))))
 

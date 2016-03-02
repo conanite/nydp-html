@@ -4,6 +4,7 @@ require "nydp"
 require "nydp/literal"
 require "nydp/builtin"
 require "nydp/html/version"
+require "haml/filters/textile"
 
 module Nydp
   module Html
