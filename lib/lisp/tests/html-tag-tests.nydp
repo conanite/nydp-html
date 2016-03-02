@@ -20,6 +20,10 @@
    (%p "hello, world")
    "<p>hello, world</p>")
 
+  ("generates a self-closing html tag"
+   (%br/)
+   "<br/>")
+
   ("generates nested html tags"
    (%p "hello " (%b "you") " over " (%i "there"))
    "<p>hello <b>you</b> over <i>there</i></p>")
@@ -38,12 +42,20 @@
 
   ("does not insert empty 'brace-list for no attributes"
    (pre-compile '(%p foo))
-   ((curry html-tag (quote p) nil) foo)))
+   ((curry html-tag "p" nil) foo)))
 
 (examples-for prefix-list
   ("generates a simple html tag with attributes"
     (%a(href "/fr/index") "click here")
     "<a href='/fr/index'>click here</a>")
+
+  ("generates a self-closing html tag with attributes"
+    (%img/(src "/smile.png"))
+    "<img src='/smile.png'/>")
+
+  ("generates a self-closing html tag with attributes and classes"
+    (%img/.round(src "/smile.png"))
+    "<img class='round' src='/smile.png'/>")
 
   ("generates nested html tags with attributes"
    (%p(class 'important)

@@ -101,27 +101,28 @@
 
 (def as-tag-attrs (attrs)
   (let hsh (or attrs (hash))
-    (joinstr ""
-             (map (fn (k) " ~|k|='~(joinstr " " hsh.,k)'")
-                  (hash-keys hsh)))))
+    (j:map (fn (k) " ~|k|='~(joinstr " " hsh.,k)'")
+       (hash-keys hsh))))
 
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
 (def html-tag (name attrs . content)
   (let formatted (map default-format content)
-    "<~|name|~(as-tag-attrs attrs)>~(apply joinstr "" formatted)</~|name|>"))
+    "<~|name|~(as-tag-attrs attrs)>~(j formatted)</~|name|>"))
 (def img (src)                (html-tag/ "img" { src src }))
 (def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } (or attrs (hash))) txt))
 (def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
 
 (def build-html-tag-fn (tagname attrs)
-  `(curry html-tag ',tagname ,(if attrs `(brace-list ,@attrs))))
+  (if (string-match tagname ".+/$")
+      `(curry html-tag/ ,(string-replace "/$" "" tagname) ,(if attrs `(brace-list ,@attrs)))
+      `(curry html-tag ,tagname ,(if attrs `(brace-list ,@attrs)))))
 
 (def html-percent-syntax (tagname attrs)
   (if (caris 'dot-syntax tagname)
       (let dot-params (cdr tagname)
-        (build-html-tag-fn (car dot-params)
+        (build-html-tag-fn (to-string:car dot-params)
                            (+ `(class ,(joinstr " " (cdr dot-params))) attrs)))
-      (build-html-tag-fn tagname attrs)))
+      (build-html-tag-fn (to-string tagname) attrs)))
 
 (mac percent-syntax names
   (html-percent-syntax (cadr names) nil))
@@ -129,5 +130,5 @@
 (define-prefix-list-macro "^%.+" vars expr
   ; allows (%a(href "/fr/index") "click" name)
   ; as shortcut for (html-tag "a" { href "/fr/index" } "click " name)
-  (let tag-name (car:parse:joinstr "" (cdr:string-split vars))
+  (let tag-name (car:parse:j:cdr:string-split vars)
     (html-percent-syntax tag-name expr)))
