@@ -15,6 +15,15 @@
    (link-to "click here!" "/other-page.html" { class "turbo" })
    "<a href='/other-page.html' class='turbo'>click here!</a>"))
 
+(examples-for link-if-txt
+  ("returns nil if no text"
+   (link-if-txt nil "/path" { class "winner" })
+   nil)
+
+  ("returns link if text"
+   (link-if-txt "click me" "/path" { class "winner" })
+   "<a href='/path' class='winner'>click me</a>"))
+
 (examples-for percent-syntax
   ("generates a simple html tag"
    (%p "hello, world")

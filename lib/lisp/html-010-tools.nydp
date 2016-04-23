@@ -132,3 +132,8 @@
   ; as shortcut for (html-tag "a" { href "/fr/index" } "click " name)
   (let tag-name (car:parse:j:cdr:string-split vars)
     (html-percent-syntax tag-name expr)))
+
+(mac link-if-txt (txt path attrs)
+  (w/uniq link-txt
+          `(let ,link-txt ,txt
+             (if ,link-txt (link-to ,link-txt ,path ,attrs)))))
