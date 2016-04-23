@@ -39,7 +39,7 @@
      (if (no infos)
          (joinstr " : " ,(pp name) (helpful/info ,name))
          (joinstr "\n\n"
-                  (map λi(apply dox-show-info i)
+                  (map λi(dox-show-info i.name i.what i.texts i.args i.src)
                        infos)))))
 
 (def helpful/show-examples (name examples)
