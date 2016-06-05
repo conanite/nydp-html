@@ -1,3 +1,10 @@
+(chapter-start 'html
+               "Functions and macros for creating HTML output by cleverly mixing nydp interpolations with HTML and textile renderers.
+
+Also provides percent-syntax for concise html-generation in nydp, for example
+
+<code>(%a.highlight(href \"http://github.com/\") \"Click\" (%b \"here\") \"for more information\")</code>")
+
 (def default-format (arg)
   ; override this to ensure values are formatted
   ; as you desire it. By default, this returns its
@@ -137,3 +144,6 @@
   (w/uniq link-txt
           `(let ,link-txt ,txt
              (if ,link-txt (link-to ,link-txt ,path ,attrs)))))
+
+(dox-add-doc 'textile-to-html 'def '("assumes 'arg is a string in Textile format, converts to html and returns the result") '(arg))
+(dox-add-doc 'haml-to-html    'def '("assumes 'arg is a string in HAML format, converts to html and returns the result"   ) '(arg))

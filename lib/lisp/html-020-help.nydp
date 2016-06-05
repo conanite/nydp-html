@@ -1,3 +1,5 @@
+(chapter-start 'html-help "Utilities for generating html-formatted help from 'dox data")
+
 (def helpful/type (thing)
   (if (no thing)
       "nil"
