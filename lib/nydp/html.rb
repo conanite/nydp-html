@@ -15,8 +15,9 @@ module Nydp
         File.expand_path(File.join File.dirname(__FILE__), name)
       end
 
-      def load_rake_tasks
-      end
+      def base_path ; relative_path "../lisp/" ; end
+
+      def load_rake_tasks ; end
 
       def loadfiles
         Dir.glob(relative_path '../lisp/html-*.nydp').sort
