@@ -1,0 +1,20 @@
+(examples-for hesc
+  ("escapes <"
+   (hesc "x < y")
+   "x &lt; y")
+
+  ("escapes >"
+   (hesc "x > y")
+   "x &gt; y")
+
+  ("escapes &"
+   (hesc "x && y")
+   "x &amp;&amp; y")
+
+  ("escapes < & >"
+   (hesc "<script>alert('x && y')</script>")
+   "&lt;script&gt;alert('x &amp;&amp; y')&lt;/script&gt;")
+
+  ("not very cleverly re-escapes escaped entities"
+   (hesc "&lt;p&gt;hello Jack &amp; Jill")
+   "&amp;lt;p&amp;gt;hello Jack &amp;amp; Jill"))

@@ -147,3 +147,8 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 
 (dox-add-doc 'textile-to-html 'def '("assumes 'arg is a string in Textile format, converts to html and returns the result") '(arg))
 (dox-add-doc 'haml-to-html    'def '("assumes 'arg is a string in HAML format, converts to html and returns the result"   ) '(arg))
+
+(def hesc (txt)
+  (string-replace ">" "&gt;"
+    (string-replace "<" "&lt;"
+      (string-replace "&" "&amp;" txt))))
