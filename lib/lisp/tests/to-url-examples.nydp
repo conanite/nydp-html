@@ -1,0 +1,8 @@
+(examples-for to-url
+  ("parameter-free url"
+   (to-url "http://www.conandalton.net")
+   "http://www.conandalton.net")
+
+  ("append simple params"
+   (to-url "http://example.com" { x 42 y 65536 })
+   "http://example.com?x=42&y=65536"))
