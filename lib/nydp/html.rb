@@ -28,13 +28,26 @@ module Nydp
       end
 
       def setup ns
-        Symbol.mk("textile-to-html",  ns).assign(Nydp::Html::TextileToHtml.new)
-        Symbol.mk("haml-to-html",     ns).assign(Nydp::Html::HamlToHtml.new)
+        Symbol.mk("textile-to-html",  ns).assign(Nydp::Html::TextileToHtml.instance)
+        Symbol.mk("haml-to-html",     ns).assign(Nydp::Html::HamlToHtml.instance)
+        Symbol.mk("percent-encode",   ns).assign(Nydp::Html::PercentEncode.instance)
+      end
+    end
+
+    class PercentEncode
+      include Nydp::Builtin::Base, Singleton
+
+      def invoke_2 vm, arg
+        vm.push_arg Nydp::StringAtom.new percent_encode arg.to_s
+      end
+
+      def percent_encode s
+        s.gsub('%', '%25').gsub(/[ \n"\?\-.<>\\^_`{\|}~\[\]]/) { |x| "%%%2X" % x.ord }
       end
     end
 
     class HamlToHtml
-      include Nydp::Builtin::Base
+      include Nydp::Builtin::Base, Singleton
       def normalise_indentation txt
         lines = txt.split(/\n/).select { |line| line.strip != "" }
         return txt if lines.length == 0
@@ -64,7 +77,7 @@ module Nydp
     end
 
     class TextileToHtml
-      include Nydp::Builtin::Base
+      include Nydp::Builtin::Base, Singleton
       def builtin_invoke vm, args
         src = args.car.to_s
         rc = RedCloth.new(src)
