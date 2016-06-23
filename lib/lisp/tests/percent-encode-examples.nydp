@@ -15,6 +15,10 @@
    (percent-encode "%50")
    "%2550")
 
+  ("does not escape -"
+   (percent-encode "a-b")
+   "a-b")
+
   ("escapes a bunch of stuff in the same string"
    (percent-encode "x[y?]=a&b%c")
    "x%5By%3F%5D=a&b%25c"))
