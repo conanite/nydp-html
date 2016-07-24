@@ -72,8 +72,26 @@ para
 
           "<h1>HEADER</h1>\n<p>1 and 2 and 6</p>\n<ul>\n\t<li>item 1</li>\n\t<li>item 2</li>\n\t<li>item 3</li>\n</ul>")
 
-         ("render a string with interpolations to html"
+         ("render a string with no interpolations to html"
           (with (a "hello, world") (render-as-textile a))
 
           "<p>hello, world</p>")
-))
+
+         ("render a string containing only a single interpolation"
+          (with (π 3.14 r 12) (render-as-textile "~(* (* r r) π)"))
+
+          "452.16")
+
+         ("render a longer multi-line string with some lines containing only a single interpolation"
+          (with (π 3.14 r 12) (render-as-textile "Start
+
+~(* (* r r) π)
+
+==-*-==
+
+~(* 2 (* r r) π)
+
+end
+"))
+
+          "<p>Start</p>\n452.16<p>-*-</p>\n904.32<p>end</p>")))

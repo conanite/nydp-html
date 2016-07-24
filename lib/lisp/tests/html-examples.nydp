@@ -2,7 +2,7 @@
   ("takes out all the non-string bits, concatenates, converts to html, then splices in all the bits again"
    (html-build-interpolator (list "<h1>" '(foo 1 2 3) "</h1>")
                             { method (curry string-replace "h1" "HEADER-1")
-                              esc "" })
+                              esc x1 })
    (string-pieces "<HEADER-1>" (interpolate (foo 1 2 3)) "</HEADER-1>")))
 
 (examples-for render-as-html

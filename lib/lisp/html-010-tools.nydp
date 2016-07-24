@@ -23,13 +23,13 @@ Also provides percent-syntax for concise html-generation in nydp, for example
                (splot (or (hash-get hsh part)
                           part)))))
 
-(def html-split-fn (seq sep hsh esc)
+(def html-split-fn (seq sep hsh escapef)
   (fn (piece)
       (if (isa 'string piece)
           piece
           (let key (j "hsf:" (seq) ":hsf")
             (hash-set hsh key `(interpolate ,piece))
-            (j esc sep key sep esc)))))
+            (escapef:j sep key sep)))))
 
 (def html-process-parts (parts converter)
   (with (hsh  (hash)
@@ -59,7 +59,7 @@ Also provides percent-syntax for concise html-generation in nydp, for example
          arg
          (and (pair? arg)
               (eq? 'string-pieces (car arg)))
-         (html-build-interpolator (cdr arg) { method x1 esc "" })
+         (html-build-interpolator (cdr arg) { method x1 esc x1 })
          arg))
 
 (mac render-as-haml (arg)
@@ -73,8 +73,10 @@ Also provides percent-syntax for concise html-generation in nydp, for example
          (haml-to-html arg)
          (and (pair? arg)
               (eq? 'string-pieces (car arg)))
-         (html-build-interpolator (cdr arg) { method haml-to-html esc "" })
+         (html-build-interpolator (cdr arg) { method haml-to-html esc x1 })
          `(haml-to-html ,arg)))
+
+(def notextile-esc (txt) "<notextile>~|txt|</notextile>")
 
 (mac render-as-textile (arg)
      ; produces code to convert 'arg to html using a textile interpreter
@@ -87,7 +89,7 @@ Also provides percent-syntax for concise html-generation in nydp, for example
          (textile-to-html arg)
          (and (pair? arg)
               (eq?   'string-pieces (car arg)))
-         (html-build-interpolator (cdr arg) { method textile-to-html esc "==" })
+         (html-build-interpolator (cdr arg) { method textile-to-html esc notextile-esc })
          `(textile-to-html ,arg)))
 
 (def to-css-rule (prop val) (joinstr "" prop ":" val ";"))
