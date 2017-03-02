@@ -23,25 +23,41 @@ Also provides percent-syntax for concise html-generation in nydp, for example
                (splot (or (hash-get hsh part)
                           part)))))
 
-(def html-split-fn (seq sep hsh escapef)
+(def html-split-fn (seq sep hsh escapef piece-handler)
   (fn (piece)
       (if (isa 'string piece)
           piece
           (let key (j "hsf:" (seq) ":hsf")
-            (hash-set hsh key `(interpolate ,piece))
+            (hash-set hsh key (piece-handler piece))
             (escapef:j sep key sep)))))
 
-(def html-process-parts (parts converter)
-  (with (hsh  (hash)
-         sep  (random-string 12))
-        (html-resplit (string-split (converter.method
-                                               (j:map (html-split-fn (seqf 0) sep hsh converter.esc)
-                                                  parts))
-                                    sep)
-                      hsh)))
+(def html-build-processor (converter)
+  (with (hsh (hash)
+         sep (random-string 12))
+        { method    converter.method
+          processor (html-split-fn (seqf 0)
+                                   sep
+                                   hsh
+                                   (or converter.esc x1)
+                                   (or converter.interpolate interpolatify))
+          hsh       hsh
+          sep       sep }))
+
+(def interpolatify (arg) `(interpolate ,arg))
+
+(def html-process-parts (parts processor)
+  ; 'parts a mixed list containing strings or uncompiled lisp forms - the cdr of 'string-pieces after parting a string with interpolations
+  ; 'converter is a hash with the following keys
+  ; * method - textile-to-html, haml-to-html, or strip-nydp-tags, or anything that takes a string and returns a string
+  ; * esc - a function that takes a string and returns another string such that when 'method processes the result, the original string is returned. For example, if 'method is 'textile-to-html, then 'esc could be (fn (txt) "==~|txt|==") because "==" is used by textile to mark text not-to-be-processed.
+  ; * interpolator - a function that takes an uncompiled lisp form and returns another uncompiled lisp form such that when executed in the context of 'string-pieces will give the desired result
+  ; returns a mixed list containing strings or uncompiled lisp forms such that the concatenation of the list is html output by converter.method (the textile, haml, or other processor)
+  (html-resplit (string-split (processor.method (j:map processor.processor parts))
+                              processor.sep)
+                processor.hsh))
 
 (def html-build-interpolator (pieces converter)
-  `(string-pieces ,@(html-process-parts pieces converter)))
+  `(string-pieces ,@(html-process-parts pieces (html-build-processor converter))))
 
 (def strip-nydp-tags (txt)
   ; remove <nydp> and </nydp> tags from given 'txt, some editing environments (ckeditor) may require such tags
@@ -97,6 +113,14 @@ Also provides percent-syntax for concise html-generation in nydp, for example
          (html-build-interpolator (cdr arg) { method textile-to-html esc notextile-esc })
          `(textile-to-html ,arg)))
 
+(def textile-to-html-source (doc)
+     (if (isa 'string doc)
+         (textile-to-html doc)
+         (and (pair? arg)
+              (eq?   'string-pieces (car arg)))
+         (html-build-interpolator (cdr arg) { method textile-to-html esc notextile-esc })
+         (error "can't convert doc to html: not a string")))
+
 (def to-css-rule (prop val) (joinstr "" prop ":" val ";"))
 
 (def to-css (hsh)
@@ -138,8 +162,11 @@ Also provides percent-syntax for concise html-generation in nydp, for example
                            (+ `(class ,(joinstr " " (cdr dot-params))) attrs)))
       (build-html-tag-fn (to-string tagname) attrs)))
 
-(mac percent-syntax names
-  (html-percent-syntax (cadr names) nil))
+(mac percent-syntax (empty . names)
+  (let name (car names)
+    (if (caris 'colon-syntax name)
+        `(colon-syntax ,(html-percent-syntax (cadr name) nil) ,@(cddr name))
+        (html-percent-syntax name nil))))
 
 (define-prefix-list-macro "^%.+" vars expr
   ; allows (%a(href "/fr/index") "click" name)
