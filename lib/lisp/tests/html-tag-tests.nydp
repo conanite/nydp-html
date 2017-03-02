@@ -49,6 +49,14 @@
    (%p "hello " (%b.thick.dense "you") " over " (%i "there"))
    "<p>hello <b class='thick dense'>you</b> over <i>there</i></p>")
 
+  ("combine with colon syntax : precompile"
+   (pre-compile:car:parse "%th:len")
+   (fn args ((curry html-tag "th" nil) (apply len args))))
+
+  ("combine with colon syntax"
+   (%th:len "foobar")
+   "<th>6</th>")
+
   ("does not insert empty 'brace-list for no attributes"
    (pre-compile '(%p foo))
    ((curry html-tag "p" nil) foo)))

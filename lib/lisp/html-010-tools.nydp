@@ -43,6 +43,11 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 (def html-build-interpolator (pieces converter)
   `(string-pieces ,@(html-process-parts pieces converter)))
 
+(def strip-nydp-tags (txt)
+  ; remove <nydp> and </nydp> tags from given 'txt, some editing environments (ckeditor) may require such tags
+  ; in order to protect active content from reformatting or other transformations
+  (string-replace "</?nydp>" "" txt))
+
 (mac render-as-html (arg)
      ; produce code to convert 'arg to html using a null interpreter.
      ; in other words, assume input is already html. Normally, we would
@@ -59,7 +64,7 @@ Also provides percent-syntax for concise html-generation in nydp, for example
          arg
          (and (pair? arg)
               (eq? 'string-pieces (car arg)))
-         (html-build-interpolator (cdr arg) { method x1 esc x1 })
+         (html-build-interpolator (cdr arg) { method strip-nydp-tags esc x1 })
          arg))
 
 (mac render-as-haml (arg)

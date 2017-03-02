@@ -48,8 +48,7 @@ more than just foo
 
 source
 ======
-(def test-example-f (foo)
-    (+ 2 foo))
+(def test-example-f (foo) (+ 2 foo))
 
 
 <div class='helpful-examples'><h2>Examples for <span class='example-name'>test-example-f</span></h2><pre class='helpful-example'>test-example-f adds two to 45

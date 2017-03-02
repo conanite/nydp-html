@@ -30,3 +30,16 @@
                   "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                   "</li>\n  <li>item " (interpolate (assign counter (+ counter 1)))
                   "</li>\n</ul>\n")))
+
+(examples-for strip-nydp-tags
+  ("does nothing to an empty string"
+   (strip-nydp-tags "")
+   "")
+
+  ("does nothing to an ordinary string with no nydp tag"
+   (strip-nydp-tags "hello nothing to see here")
+   "hello nothing to see here")
+
+  ("removes <nydp> and </nydp> tags from given string"
+   (strip-nydp-tags "blah blah <nydp>\~(blah)</nydp> more blah")
+   "blah blah \~(blah) more blah"))

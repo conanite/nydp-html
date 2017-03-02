@@ -1,0 +1,30 @@
+(examples-for textile-to-html-source
+  ("returns a html string for a textile string"
+   (textile-to-html-source "h1. hello
+
+* item 1
+* item 2
+
+bye")
+   "<h1>hello</h1>
+<ul>
+\t<li>item 1</li>
+\t<li>item 2</li>
+</ul>
+<p>bye</p>")
+
+  ("returns a html string with interpolations for a textile string with interpolations"
+   (textile-to-html-source "h1. hello
+
+* item ~~first
+* item ~~(second items)
+
+bye")
+   "<h1>hello</h1>
+<ul>
+\t<li>item ~~first</li>
+\t<li>item ~~(second items)</li>
+</ul>
+<p>bye</p>")
+
+)
