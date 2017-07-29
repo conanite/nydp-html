@@ -51,7 +51,7 @@
 
   ("combine with colon syntax : precompile"
    (pre-compile:car:parse "%th:len")
-   (fn args ((curry html-tag "th" nil) (apply len args))))
+   (fn args ((fn args (apply html-tag "th" nil args)) (apply len args))))
 
   ("combine with colon syntax"
    (%th:len "foobar")
@@ -59,7 +59,7 @@
 
   ("does not insert empty 'brace-list for no attributes"
    (pre-compile '(%p foo))
-   ((curry html-tag "p" nil) foo)))
+   ((fn args (apply html-tag "p" nil args)) foo))
 
 (examples-for prefix-list
   ("generates a simple html tag with attributes"
