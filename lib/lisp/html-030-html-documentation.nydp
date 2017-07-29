@@ -1,0 +1,68 @@
+(chapter-start 'html-help "Utilities for generating html-formatted documentation")
+
+(def helpful/chapters/path (chapter-name)
+  ; override this to customise for your own application's routes
+  "/dox/chapters/~chapter-name")
+
+(def helpful/items/path (item-name)
+  ; override this to customise for your own application's routes
+  "/dox/items/~(percent-encode item-name)")
+
+(defmemo helpful/chapters/index ()
+  ; return a HTML table element with a row for each chapter. Each row provides a link to the chapter,
+  ; the chapter descripton, and chapter content names
+  (%table.chapters
+          (mapx (sort (chapter-names)) chap
+                (%tr (%td (%a(href (helpful/chapters/path chap)) chap))
+                     (let chapter (chapter-find chap)
+                       (j (%td chapter.description)
+                          (%td (mapx chapter.contents item
+                                     (%a.item(href (helpful/items/path item.name)) item.name)))))))))
+
+(defmemo helpful/chapters/show (chapter-name)
+  ; return a HTML div element containing a paragraph for the chapter description, and a table element
+  ; containing  a row for each item. Each item row provides a link to the item, the item type, and
+  ; the item documentation
+  (let chapter (chapter-find chapter-name)
+    (%div (%p chapter.description)
+          (%table.chapter-items
+                  (mapx (sort-by &name chapter.contents) item-group
+                        (mapx item-group item
+                              (%tr(class (rowclass))
+                                  (%td item.what)
+                                  (%td (%a.item(href (helpful/items/path item.name)) item.name))
+                                  (%td (render-as-textile (joinstr "\n" item.texts))))))))))
+
+
+(def helpful/item/def (item)
+  ; generate html to present documentation for a 'def or a 'mac
+  (%div.item-info
+        (%h4 (%span.type item.what) " "
+             (%span.name item.name) " "
+             (%span.small.args (inspect item.args)))
+        (%p.small "Defined in " (%b (inspect item.file)) " in plugin " (%b (inspect item.plugin)))
+        (%p
+         (j:map λc(%a.chapter(href (helpful/chapters/path c)) c) item.chapters)
+         (render-as-textile (joinstr "\n" item.texts)))
+        (%h4 "Source")
+        (%pre.source (preserve:hesc:dox-show-src item.src))))
+
+(assign helpful/handlers { def helpful/item/def mac helpful/item/def })
+
+(def helpful/item/info (item)
+  ((hash-get helpful/handlers item.what) item))
+
+(def helpful/item/example (example)
+  (%div.item-example
+        (%h5 "example: " (%b (car example)))
+        (%pre.source (preserve:hesc:dox-show-src:cadr example))
+        (%pre.source (preserve:hesc:dox-show-src:caddr example))))
+
+(defmemo helpful/item (item-name)
+  ; return a HTML div element with lots of information about the named item
+  (with (items    (dox-lookup item-name)
+         examples (dox-examples item-name))
+    (%div.items-info
+          (j:map λi(helpful/item/info i) items)
+          (%h4 "Examples")
+          (j:map λx(map λy(helpful/item/example y) x) examples))))

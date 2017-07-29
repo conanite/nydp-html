@@ -192,3 +192,5 @@ Also provides percent-syntax for concise html-generation in nydp, for example
   (string-replace ">" "&gt;"
     (string-replace "<" "&lt;"
       (string-replace "&" "&amp;" txt))))
+
+(def/cycler rowclass (oddrow evenrow))
