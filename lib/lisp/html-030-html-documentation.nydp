@@ -16,8 +16,9 @@
                 (%tr (%td (%a(href (helpful/chapters/path chap)) chap))
                      (let chapter (chapter-find chap)
                        (j (%td chapter.description)
-                          (%td (mapx chapter.contents item
-                                     (%a.item(href (helpful/items/path item.name)) item.name)))))))))
+                          (%td (joinstr "\n"
+                                        (map λi(%a.item(href (helpful/items/path i.name)) (hesc i.name))
+                                             chapter.contents)))))))))
 
 (defmemo helpful/chapters/show (chapter-name)
   ; return a HTML div element containing a paragraph for the chapter description, and a table element

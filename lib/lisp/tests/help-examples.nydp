@@ -1,4 +1,3 @@
-;; this function and the following example are used as test-cases in examples-for help
 (def test-example-f (foo)
   ; more than just foo
   (+ 2 foo))

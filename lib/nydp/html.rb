@@ -42,7 +42,7 @@ module Nydp
       end
 
       def percent_encode s
-        s.gsub('%', '%25').gsub(/[ \n"\?.<>\\^_`{\|}~\[\]]/) { |x| "%%%2X" % x.ord }
+        s.gsub('%', '%25').gsub(/[ \n"\?.<>\\^_`{\|}~\[\]\/]/) { |x| "%%%2X" % x.ord }
       end
     end
 
