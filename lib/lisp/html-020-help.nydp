@@ -17,7 +17,7 @@
                      (%div.key k)
                      "-&gt;"
                      (%div.keyvalue (helpful/type thing.,k))))
-       (hash-keys thing)))
+       (sort:hash-keys thing)))
 
 (def helpful/info (thing)
   ; tries to say something useful about the thing
