@@ -86,8 +86,8 @@
 
 ; show history of setters for this item
 (def settings/values/help (values)
-  (j:map values
-     λv(%tr (%td v.plugin) (%td v.script) (%td (%pre.source:preserve:hesc:dox-show-src v.value)))))
+  (j:map λv(%tr (%td v.plugin) (%td v.script) (%td (%pre.source:preserve:hesc:dox-show-src v.value)))
+         values))
 
 ; show history of setters for item with given name, except for initial default value
 (def settings/values (name) (aif (dox-item-by-type 'setting (sym name)) (settings/values/help (all-but-last it.values))))
