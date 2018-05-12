@@ -35,8 +35,8 @@
                                   (%td (render-as-textile (joinstr "\n" item.texts))))))))))
 
 
+; generate html to present documentation for a 'def or a 'mac
 (def helpful/item/def (item)
-  ; generate html to present documentation for a 'def or a 'mac
   (%div.item-info
         (%h4 (%span.type item.what) " "
              (%span.name item.name) " "
@@ -48,7 +48,23 @@
         (%h4 "Source")
         (%pre.source (preserve:hesc:dox-show-src item.src))))
 
-(assign helpful/handlers { def helpful/item/def mac helpful/item/def })
+; generate html documentation for a setting
+(def helpful/item/setting (item)
+  (%div.item-info
+     (%h4 (%span.type item.setting.context) " " (%span.name item.name))
+     (%p (j:map λc(%a.chapter(href (helpful/chapters/path c)) c) item.chapters)
+         (render-as-textile (joinstr "\n" item.texts)))
+    (%h4 "Current value (evaluated)")
+    (%pre.source:setting item.setting.name)
+    (%h4 "Definitions and sources")
+    (%table.setting-values (settings/values/help item.values))))
+
+(assign helpful/handlers
+        {
+         def     helpful/item/def
+         mac     helpful/item/def
+         setting helpful/item/setting
+        })
 
 (def helpful/item/info (item)
   ((hash-get helpful/handlers item.what) item))
@@ -67,3 +83,14 @@
           (j:map λi(helpful/item/info i) items)
           (%h4 "Examples")
           (j:map λx(map λy(helpful/item/example y) x) examples))))
+
+; show history of setters for this item
+(def settings/values/help (values)
+  (map-inline values val
+    (%tr (%td val.plugin) (%td val.script) (%td (%pre.source:preserve:hesc:dox-show-src val.value)))))
+
+; show history of setters for item with given name, except for initial default value
+(def settings/values (name) (aif (dox-item-by-type 'setting (sym name)) (settings/values/help (all-but-last it.values))))
+
+; generate html documentation for the setting with the given name
+(def settings/help (name) (settings/help/item (dox-item-by-type 'setting (sym name))))
