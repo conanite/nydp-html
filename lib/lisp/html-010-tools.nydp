@@ -194,3 +194,15 @@ Also provides percent-syntax for concise html-generation in nydp, for example
       (string-replace "&" "&amp;" txt))))
 
 (def/cycler rowclass (oddrow evenrow))
+
+;; create a SECTION tag with class "warning", containing a H3 with 'header and a P tag for each item in 'details
+(def warning (header . details)
+  (apply %section.warning
+         (%h3 header)
+         (map λd(%p d) details)))
+
+;; create a SECTION tag with class "notice", containing a H3 with 'header and a P tag for each item in 'details
+(def notice (header . details)
+  (apply %section.notice
+         (%h3 header)
+         (map λd(%p d) details)))
