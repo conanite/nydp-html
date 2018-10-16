@@ -1,16 +1,41 @@
 (chapter-start 'html-help "Utilities for generating html-formatted documentation")
 
+;; override this to customise for your own application's routes
 (def helpful/chapters/path (chapter-name)
-  ; override this to customise for your own application's routes
   "/dox/chapters/~chapter-name")
 
+;; override this to customise for your own application's routes
 (def helpful/items/path (item-name)
-  ; override this to customise for your own application's routes
   "/dox/items/~(percent-encode item-name)")
 
+;; override this to customise for your own application's routes
+(def helpful/types/path (type-name)
+  "/dox/types/~(percent-encode type-name)")
+
+;; return a HTML UL element with an LI for each type of thing '(def mac setting pp/def . others)
+(defmemo helpful/types/index ()
+  (%ul.dox.dox-types
+    (mapx (sort (dox-types)) dox-type
+      (%li (%a(href (helpful/types/path dox-type)) (hesc dox-type))))))
+
+;; return a HTML UL element with an LI for each type of thing '(def mac setting pp/def . others)
+(defmemo helpful/types/show (dox-type)
+  (%table.chapters
+    (mapx (sort (chapter-names)) chap
+      (let contents (dox-items-by-type-and-chapter (sym dox-type) chap)
+        (if contents
+          (%tr
+            (%td (%a(href (helpful/chapters/path chap)) chap))
+            (let chapter (chapter-find chap)
+              (j
+                (%td chapter.description)
+                (%td
+                  (map λi(%a.item(href (helpful/items/path i.name)) (hesc i.name))
+                       contents))))))))))
+
+;; return a HTML table element with a row for each chapter. Each row provides a link to the chapter,
+;; the chapter descripton, and chapter content names
 (defmemo helpful/chapters/index ()
-  ; return a HTML table element with a row for each chapter. Each row provides a link to the chapter,
-  ; the chapter descripton, and chapter content names
   (%table.chapters
           (mapx (sort (chapter-names)) chap
                 (%tr (%td (%a(href (helpful/chapters/path chap)) chap))
@@ -20,10 +45,10 @@
                                         (map λi(%a.item(href (helpful/items/path i.name)) (hesc i.name))
                                              chapter.contents)))))))))
 
+;; return a HTML div element containing a paragraph for the chapter description, and a table element
+;; containing  a row for each item. Each item row provides a link to the item, the item type, and
+;; the item documentation
 (defmemo helpful/chapters/show (chapter-name)
-  ; return a HTML div element containing a paragraph for the chapter description, and a table element
-  ; containing  a row for each item. Each item row provides a link to the item, the item type, and
-  ; the item documentation
   (let chapter (chapter-find chapter-name)
     (%div (%p chapter.description)
           (%table.chapter-items
