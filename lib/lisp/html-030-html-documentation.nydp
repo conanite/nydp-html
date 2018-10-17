@@ -84,11 +84,31 @@
     (%h4 "Definitions and sources")
     (%table.setting-values (settings/values/help item.values))))
 
+(def helpful/item/hook (item)
+  (%div.item-info
+     (%h4 (%span.type item.name))
+     (%p (j:map λc(%a.chapter(href (helpful/chapters/path c)) c) (compact item.chapters))
+         (render-as-textile (joinstr "\n" item.texts)))
+    (%h4 "Sources")
+    (%table
+            (%tr (%th "Plugin")
+                 (%th "File")
+                 (%th "Chapter")
+                 (%th "Args")
+                 (%th "Source"))
+            (j:map λv(%tr (%td v.plugin)
+                          (%td v.file)
+                          (%td (%a(href (helpful/chapters/path v.chapter)) v.chapter))
+                          (%td (inspect v.args))
+                          (%td (%pre.source (preserve:hesc:dox-show-src v.src))))
+               item.hooks))))
+
 (assign helpful/handlers
         {
          def     helpful/item/def
          mac     helpful/item/def
          setting helpful/item/setting
+         hook    helpful/item/hook
         })
 
 (def helpful/item/info (item)
@@ -100,22 +120,25 @@
         (%pre.source (preserve:hesc:dox-show-src:cadr example))
         (%pre.source (preserve:hesc:dox-show-src:caddr example))))
 
+;; return a HTML div element with lots of information about the named item
 (defmemo helpful/item (item-name)
-  ; return a HTML div element with lots of information about the named item
   (with (items    (dox-lookup item-name)
          examples (dox-examples item-name))
     (%div.items-info
           (j:map λi(helpful/item/info i) items)
-          (%h4 "Examples")
-          (j:map λx(map λy(helpful/item/example y) x) examples))))
+          (if examples
+            (j (%h4 "Examples")
+               (j:map λx(map λy(helpful/item/example y) x) examples))))))
 
-; show history of setters for this item
+;; show history of setters for this item
 (def settings/values/help (values)
   (j:map λv(%tr (%td v.plugin) (%td v.script) (%td (%pre.source:preserve:hesc:dox-show-src v.value)))
          values))
 
 ; show history of setters for item with given name, except for initial default value
-(def settings/values (name) (aif (dox-item-by-type 'setting (sym name)) (settings/values/help (all-but-last it.values))))
+(def settings/values (name)
+  (aif (dox-item-by-type 'setting (sym name))
+       (settings/values/help (all-but-last it.values))))
 
 ; generate html documentation for the setting with the given name
 (def settings/help (name) (settings/help/item (dox-item-by-type 'setting (sym name))))
