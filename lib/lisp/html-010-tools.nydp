@@ -137,9 +137,14 @@ Also provides percent-syntax for concise html-generation in nydp, for example
        (joinstr "" (map (fn (k) (to-css-rule k hsh.,k))
                         (hash-keys hsh)))))
 
+;; return empty string if v is nil, otherwise a string representation
+(def html/tag-attribute-string (k v)
+  (if (no v) ""
+      " ~|k|='~(joinstr " " v)'"))
+
 (def as-tag-attrs (attrs)
   (let hsh (or attrs (hash))
-    (j:map (fn (k) " ~|k|='~(joinstr " " hsh.,k)'")
+    (j:map (fn (k) (html/tag-attribute-string k (hash-get hsh k)))
        (hash-keys hsh))))
 
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")

@@ -59,7 +59,7 @@
 
   ("does not insert empty 'brace-list for no attributes"
    (pre-compile '(%p foo))
-   ((fn args (apply html-tag "p" nil args)) foo))
+   ((fn args (apply html-tag "p" nil args)) foo)))
 
 (examples-for prefix-list
   ("generates a simple html tag with attributes"
@@ -79,7 +79,17 @@
       "read this and "
       (%a(href "/fr/index") "click here")
       "!")
-    "<p class='important'>read this and <a href='/fr/index'>click here</a>!</p>")
+   "<p class='important'>read this and <a href='/fr/index'>click here</a>!</p>")
+
+  ("ignores nil attributes"
+   (with (name 'return_to val nil)
+     (%input/.myklass(type 'hidden name name value val)))
+   "<input class='myklass' type='hidden' name='return_to'/>")
+
+  ("preserves empty attributes"
+   (with (name 'return_to val "")
+     (%input/.myklass(type 'hidden name name value val)))
+   "<input class='myklass' type='hidden' name='return_to' value=''/>")
 
   ("generates nested html tags with classnames and other attributes"
    (%p(class 'important)
