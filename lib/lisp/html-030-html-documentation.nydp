@@ -112,7 +112,8 @@
         })
 
 (def helpful/item/info (item)
-  ((hash-get helpful/handlers item.what) item))
+  (aif (hash-get helpful/handlers item.what)
+       (it item)))
 
 (def helpful/item/example (example)
   (%div.item-example
