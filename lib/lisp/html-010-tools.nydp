@@ -155,16 +155,42 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 (def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } (or attrs (hash))) txt))
 (def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
 
+(def html-merge-attr (attr-list attr val join acc)
+  (if (no attr-list) `(,attr ,val ,@acc)
+      (eq? (car attr-list) attr)
+      (html-merge-attr (cddr attr-list) attr `(joinstr ,join ,val ,(cadr attr-list)) join acc)
+      (html-merge-attr (cddr attr-list) attr val join `(,@acc ,(car attr-list) ,(cadr attr-list)))))
+
+(def html-append-attrs (initial attrs)
+  (if attrs
+      (with (thistle (car attrs)
+             others  (cdr attrs))
+        (html-append-attrs
+         (+ initial (list (j " " (car thistle) "='") (cadr thistle) "'"))
+         others))
+      initial))
+
+(def html-build-self-closing-tag-fn (tagname attrs)
+  `(fn () (string-pieces  ,(j "<" (string-replace "/$" "" tagname)) ,@(html-append-attrs nil (pairs attrs)) "/>")))
+
+(def html-build-content-tag-fn (tagname attrs)
+  `(fn content
+       (string-pieces ,(j "<" tagname)
+                      ,@(html-append-attrs nil (pairs attrs))
+                      ">"
+                      (j (map default-format content))
+                      ,(j "</" tagname ">"))))
+
 (def build-html-tag-fn (tagname attrs)
   (if (string-match tagname ".+/$")
-      `(curry html-tag/ ,(string-replace "/$" "" tagname) ,(if attrs `(brace-list ,@attrs)))
-      `(curry html-tag ,tagname ,(if attrs `(brace-list ,@attrs)))))
+      (html-build-self-closing-tag-fn tagname attrs)
+      (html-build-content-tag-fn tagname attrs)))
 
 (def html-percent-syntax (tagname attrs)
   (if (caris 'dot-syntax tagname)
       (let dot-params (cdr tagname)
         (build-html-tag-fn (to-string:car dot-params)
-                           (+ `(class ,(joinstr " " (cdr dot-params))) attrs)))
+                           (html-merge-attr attrs 'class (joinstr " " (cdr dot-params)) " ")))
       (build-html-tag-fn (to-string tagname) attrs)))
 
 (mac percent-syntax (empty . names)

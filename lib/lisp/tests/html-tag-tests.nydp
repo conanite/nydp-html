@@ -42,8 +42,9 @@
    "<p>hello <b class='thick'>you</b> over <i>there</i></p>")
 
   ("concatenates content"
-   (%p (map λx(%span.hello x) '(a b c)))
-   "<p><span class='hello'>a</span><span class='hello'>b</span><span class='hello'>c</span></p>")
+   (with (title "chocolate" kla "wonka")
+     (%p.willy(class kla title title) (map λx(%span.hello x) '(a b c))))
+   "<p class='willy wonka' title='chocolate'><span class='hello'>a</span><span class='hello'>b</span><span class='hello'>c</span></p>")
 
   ("generates html tags with multiple classnames"
    (%p "hello " (%b.thick.dense "you") " over " (%i "there"))
@@ -51,20 +52,33 @@
 
   ("combine with colon syntax : precompile"
    (pre-compile:car:parse "%th:len")
-   (fn args ((fn args (apply html-tag "th" nil args)) (apply len args))))
+   (fn args ((fn content (string-pieces "<th" ">" (j (map default-format content)) "</th>")) (apply len args))))
 
   ("combine with colon syntax"
    (%th:len "foobar")
    "<th>6</th>")
 
+  ("combine with colon-ampersand syntax"
+   (j:map %th:&first (list { first "conan" } { first "sabrina" } { first "tiber" } { first "sapphire" }))
+   "<th>conan</th><th>sabrina</th><th>tiber</th><th>sapphire</th>")
+
   ("does not insert empty 'brace-list for no attributes"
    (pre-compile '(%p foo))
-   ((fn args (apply html-tag "p" nil args)) foo)))
+   ((fn content (string-pieces "<p" ">" (j (map default-format content)) "</p>")) foo)))
 
 (examples-for prefix-list
   ("generates a simple html tag with attributes"
     (%a(href "/fr/index") "click here")
     "<a href='/fr/index'>click here</a>")
+
+  ("multiple classes"
+    (%a.foo.bar(class "zeb" href "/fr/index") "click here")
+    "<a class='foo bar zeb' href='/fr/index'>click here</a>")
+
+  ("multiple classes with variable class name"
+   (let kla "fex"
+    (%a.foo.bar(class kla href "/fr/index") "click here"))
+    "<a class='foo bar fex' href='/fr/index'>click here</a>")
 
   ("generates a self-closing html tag with attributes"
     (%img/(src "/smile.png"))
@@ -84,7 +98,7 @@
   ("ignores nil attributes"
    (with (name 'return_to val nil)
      (%input/.myklass(type 'hidden name name value val)))
-   "<input class='myklass' type='hidden' name='return_to'/>")
+   "<input class='myklass' type='hidden' name='return_to' value=''/>")
 
   ("preserves empty attributes"
    (with (name 'return_to val "")
