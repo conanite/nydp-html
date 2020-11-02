@@ -148,11 +148,15 @@ Also provides percent-syntax for concise html-generation in nydp, for example
        (hash-keys hsh))))
 
 (def html-tag/ (name attrs) "<~|name|~(as-tag-attrs attrs)/>")
+
 (def html-tag (name attrs . content)
   (let formatted (map default-format content)
     "<~|name|~(as-tag-attrs attrs)>~(j formatted)</~|name|>"))
+
 (def img (src)                (html-tag/ "img" { src src }))
+
 (def link-to (txt path attrs) (html-tag "a" (hash-merge { href path } (or attrs (hash))) txt))
+
 (def html-tag-fn (name attrs) (fn content (apply html-tag name attrs content)))
 
 (def html-merge-attr (attr-list attr val join acc)
@@ -166,7 +170,10 @@ Also provides percent-syntax for concise html-generation in nydp, for example
       (with (thistle (car attrs)
              others  (cdr attrs))
         (html-append-attrs
-         (+ initial (list (j " " (car thistle) "='") (cadr thistle) "'"))
+         (+ initial
+            (list (j " " (car thistle) "='")
+                  `(joinstr " " ,(cadr thistle))
+                  "'"))
          others))
       initial))
 

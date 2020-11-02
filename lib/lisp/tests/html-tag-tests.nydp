@@ -46,6 +46,16 @@
      (%p.willy(class kla title title) (map λx(%span.hello x) '(a b c))))
    "<p class='willy wonka' title='chocolate'><span class='hello'>a</span><span class='hello'>b</span><span class='hello'>c</span></p>")
 
+  ("multiple classes in list"
+   (let kla (list "one" "two" "three")
+     (%div(class kla) "eins zwei drei!"))
+   "<div class='one two three'>eins zwei drei!</div>")
+
+  ("multiple classes in list and in prefix"
+   (let kla (list "one" "two" "three")
+     (%div.count.zahlen(class kla title "Auf deutsch") "eins zwei drei!"))
+   "<div class='count zahlen one two three' title='Auf deutsch'>eins zwei drei!</div>")
+
   ("generates html tags with multiple classnames"
    (%p "hello " (%b.thick.dense "you") " over " (%i "there"))
    "<p>hello <b class='thick dense'>you</b> over <i>there</i></p>")
