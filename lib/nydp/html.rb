@@ -38,7 +38,7 @@ module Nydp
       include Nydp::Builtin::Base, Singleton
 
       def invoke_2 vm, arg
-        vm.push_arg Nydp::StringAtom.new percent_encode arg.to_s
+        vm.push_arg percent_encode arg.to_s
       end
 
       def percent_encode s
@@ -72,7 +72,7 @@ module Nydp
       end
 
       def builtin_invoke vm, args
-        vm.push_arg Nydp::StringAtom.new convert_from_haml(args.car.to_s)
+        vm.push_arg convert_from_haml(args.car.to_s)
       end
     end
 
@@ -82,7 +82,7 @@ module Nydp
         src = args.car.to_s
         rc = RedCloth.new(src)
         rc.no_span_caps = true
-        vm.push_arg Nydp::StringAtom.new rc.to_html
+        vm.push_arg rc.to_html
       end
     end
   end
