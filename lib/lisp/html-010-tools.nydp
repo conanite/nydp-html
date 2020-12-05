@@ -171,9 +171,10 @@ Also provides percent-syntax for concise html-generation in nydp, for example
              others  (cdr attrs))
         (html-append-attrs
          (+ initial
-            (list (j " " (car thistle) "='")
-                  `(joinstr " " ,(cadr thistle))
-                  "'"))
+            (list
+             `(html/tag-attribute-string
+               ',(car thistle)
+               ,(cadr thistle))))
          others))
       initial))
 

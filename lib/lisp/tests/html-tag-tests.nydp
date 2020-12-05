@@ -94,6 +94,10 @@
     (%img/(src "/smile.png"))
     "<img src='/smile.png'/>")
 
+  ("generates a self-closing html tag with no nil attributes"
+    (%input/(type 'radio checked (if (eq? 3 4) "checked" nil)))
+    "<input type='radio'/>")
+
   ("generates a self-closing html tag with attributes and classes"
     (%img/.round(src "/smile.png"))
     "<img class='round' src='/smile.png'/>")
@@ -108,7 +112,7 @@
   ("ignores nil attributes"
    (with (name 'return_to val nil)
      (%input/.myklass(type 'hidden name name value val)))
-   "<input class='myklass' type='hidden' name='return_to' value=''/>")
+   "<input class='myklass' type='hidden' name='return_to'/>")
 
   ("preserves empty attributes"
    (with (name 'return_to val "")
