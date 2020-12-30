@@ -20,5 +20,5 @@
    "a-b")
 
   ("escapes a bunch of stuff in the same string"
-   (percent-encode "x[y?]=a&b%c/d")
-   "x%5By%3F%5D=a&b%25c%2Fd"))
+   (percent-encode "x[y?]=a&b%c/d=2&zz=zz;#c@cd.n")
+   "x%5By%3F%5D%3Da%26b%25c%2Fd%3D2%26zz%3Dzz%3B%23c%40cd%2En"))
