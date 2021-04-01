@@ -21,7 +21,7 @@
 ;; return a HTML UL element with an LI for each type of thing '(def mac setting pp/def . others)
 (def helpful/types/show (dox-type)
   (%table.chapters
-    (mapx (sort (chapter-names)) chap
+    (mapx (cons nil (sort (chapter-names))) chap
       (let contents (dox-items-by-type-and-chapter (sym dox-type) chap)
         (if contents
           (%tr
