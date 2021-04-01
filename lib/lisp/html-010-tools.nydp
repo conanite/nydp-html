@@ -245,3 +245,20 @@ Also provides percent-syntax for concise html-generation in nydp, for example
   (apply %section.notice
          (%h3 header)
          (map λd(%p d) details)))
+
+;; generate a single hidden html input element
+(def hidden-input (name value attrs)
+  (let a { type 'hidden name name value value }
+    (html-tag/ 'input (if attrs (hash-merge a attrs) a))))
+
+;; generate hidden html input elements from the given hash
+(def html/hidden-inputs (hsh)
+  (joinstr "\n"
+           (map λk(hidden-input k hsh.,k)
+                (hash-keys hsh))))
+
+;; create hidden input elements for all GET query params except those named in 'excludes
+(def html/preserve-query-params-in-form (excludes)
+  (let q (&query (http-request))
+    (aif (map sym (hash-keys q))
+         (html/hidden-inputs (hash-slice q (- it excludes))))))
