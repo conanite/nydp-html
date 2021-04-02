@@ -4,5 +4,5 @@
    "http://www.conandalton.net")
 
   ("append simple params"
-   (to-url "http://example.com" { x 42 y 65536 })
-   "http://example.com?x=42&y=65536"))
+   (to-url "http://example.com" { x 42 y 65536 z "hello! [+world+]" })
+   "http://example.com?x=42&y=65536&z=hello%21%20%5B%2Bworld%2B%5D"))

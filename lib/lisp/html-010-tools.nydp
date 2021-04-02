@@ -137,10 +137,20 @@ Also provides percent-syntax for concise html-generation in nydp, for example
        (joinstr "" (map (fn (k) (to-css-rule k hsh.,k))
                         (hash-keys hsh)))))
 
+(let bad-chars (regexp "\['<>&\"\]")
+  (def html/escape-attribute (v)
+    (string-replace
+       bad-chars
+       { "'" "&#39;"
+         "<" "&lt;"
+         ">" "&gt;"
+         "\"" "&quot;" }
+       v)))
+
 ;; return empty string if v is nil, otherwise a string representation
 (def html/tag-attribute-string (k v)
   (if (no v) ""
-      " ~|k|='~(joinstr " " v)'"))
+      " ~|k|='~(html/escape-attribute:joinstr " " v)'"))
 
 (def as-tag-attrs (attrs)
   (let hsh (or attrs (hash))
@@ -222,7 +232,7 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 (dox-add-doc 'haml-to-html    'def '("assumes 'arg is a string in HAML format, converts to html and returns the result"   ) '(arg))
 
 (def to-url-params (hsh)
-  (joinstr "&" (map λk(joinstr "=" k hsh.,k) (hash-keys hsh))))
+  (joinstr "&" (map λk(joinstr "=" k (percent-encode hsh.,k)) (hash-keys hsh))))
 
 (def to-url (base params)
   (joinstr "?" (reject !present? (list base (to-url-params params)))))

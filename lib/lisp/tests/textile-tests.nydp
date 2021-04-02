@@ -79,7 +79,7 @@ para
   ("render a string containing only a single interpolation"
    (with (π 3.14 r 12) (render-as-textile "~(* (* r r) π)"))
 
-   "452.16")
+   "<p>452.16</p>")
 
   ("render a longer multi-line string with some lines containing only a single interpolation"
    (with (π 3.14 r 12) (render-as-textile "Start

@@ -10,7 +10,7 @@
    (img "/assets/face.png")
    "<img src='/assets/face.png'/>"))
 
-(examples-for a
+(examples-for link-to
   ("returns an anchor tag"
    (link-to "click here!" "/other-page.html" { class "turbo" })
    "<a href='/other-page.html' class='turbo'>click here!</a>"))
@@ -28,6 +28,10 @@
   ("generates a simple html tag"
    (%p "hello, world")
    "<p>hello, world</p>")
+
+  ("escapes attributes"
+   (%p(title "it's been a >long< day!") "hello, world")
+   "<p title='it&#39;s been a &gt;long&lt; day!'>hello, world</p>")
 
   ("generates a self-closing html tag"
    (%br/)
