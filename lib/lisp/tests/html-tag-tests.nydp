@@ -30,8 +30,8 @@
    "<p>hello, world</p>")
 
   ("escapes attributes"
-   (%p(title "it's been a >long< day!") "hello, world")
-   "<p title='it&#39;s been a &gt;long&lt; day!'>hello, world</p>")
+   (%p(title "it's been a >long< day & I'm tired!") "hello, world")
+   "<p title='it&#39;s been a &gt;long&lt; day &amp; I&#39;m tired!'>hello, world</p>")
 
   ("generates a self-closing html tag"
    (%br/)
