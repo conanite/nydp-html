@@ -178,14 +178,14 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 
 (def html-append-attrs (initial attrs)
   (if attrs
-      (with (thistle (car attrs)
-             others  (cdr attrs))
+      (with (thisattr (car attrs)
+             others   (cdr attrs))
         (html-append-attrs
          (+ initial
             (list
              `(html/tag-attribute-string
-               ',(car thistle)
-               ,(cadr thistle))))
+               ',(car thisattr)
+               ,(cadr thisattr))))
          others))
       initial))
 
