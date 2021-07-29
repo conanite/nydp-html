@@ -193,12 +193,17 @@ Also provides percent-syntax for concise html-generation in nydp, for example
   `(fn () (string-pieces  ,(j "<" (string-replace "/$" "" tagname)) ,@(html-append-attrs nil (pairs attrs)) "/>")))
 
 (def html-build-content-tag-fn (tagname attrs)
-  `(fn content
-       (string-pieces ,(j "<" tagname)
-                      ,@(html-append-attrs nil (pairs attrs))
-                      ">"
-                      (j (map default-format content))
-                      ,(j "</" tagname ">"))))
+  (if attrs
+      `(fn content
+           (string-pieces ,(j "<" tagname)
+                          ,@(html-append-attrs nil (pairs attrs))
+                          ">"
+                          (j (map default-format content))
+                          ,(j "</" tagname ">")))
+      `(fn content
+           (string-pieces ,(j "<" tagname ">")
+                          (j (map default-format content))
+                          ,(j "</" tagname ">")))))
 
 (def build-html-tag-fn (tagname attrs)
   (if (string-match tagname ".+/$")
