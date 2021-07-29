@@ -28,17 +28,16 @@ module Nydp
       end
 
       def setup ns
-        Symbol.mk("textile-to-html",  ns).assign(Nydp::Html::TextileToHtml.instance)
-        Symbol.mk("haml-to-html",     ns).assign(Nydp::Html::HamlToHtml.instance)
-        Symbol.mk("percent-encode",   ns).assign(Nydp::Html::PercentEncode.instance)
+        ns.assign(:"textile-to-html" , Nydp::Html::TextileToHtml.instance)
+        ns.assign(:"haml-to-html"    , Nydp::Html::HamlToHtml.instance   )
+        ns.assign(:"percent-encode"  , Nydp::Html::PercentEncode.instance)
       end
     end
 
     class PercentEncode
       include Nydp::Builtin::Base, Singleton
 
-      def invoke_2 vm, arg
-        # vm.push_arg percent_encode arg.to_s
+      def call arg
         percent_encode arg.to_s
       end
 
@@ -72,19 +71,17 @@ module Nydp
         end
       end
 
-      def builtin_invoke vm, args
-        # vm.push_arg convert_from_haml(args.car.to_s)
-        convert_from_haml(args.car.to_s)
+      def call *args
+        convert_from_haml(args.first.to_s)
       end
     end
 
     class TextileToHtml
       include Nydp::Builtin::Base, Singleton
-      def builtin_invoke vm, args
-        src = args.car.to_s
+      def call *args
+        src = args.first.to_s
         rc = RedCloth.new(src)
         rc.no_span_caps = true
-        # vm.push_arg rc.to_html
         rc.to_html
       end
     end
