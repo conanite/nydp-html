@@ -9,22 +9,20 @@ require "haml/filters/textile"
 module Nydp
   module Html
     class Plugin
-      def name ; "Nydp/HTML plugin" ; end
+      include Nydp::PluginHelper
 
-      def relative_path name
-        File.expand_path(File.join File.dirname(__FILE__), name)
-      end
+      def name ; "Nydp/HTML plugin" ; end
 
       def base_path ; relative_path "../lisp/" ; end
 
       def load_rake_tasks ; end
 
       def loadfiles
-        Dir.glob(relative_path '../lisp/html-*.nydp').sort
+        file_readers Dir.glob(relative_path '../lisp/html-*.nydp').sort
       end
 
       def testfiles
-        Dir.glob(relative_path '../lisp/tests/**/*.nydp')
+        file_readers Dir.glob(relative_path '../lisp/tests/**/*.nydp').sort
       end
 
       def setup ns
