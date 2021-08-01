@@ -45,13 +45,13 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 
 (def interpolatify (arg) `(interpolate ,arg))
 
+;; 'parts a mixed list containing strings or uncompiled lisp forms - the cdr of 'string-pieces after parting a string with interpolations
+;; 'converter is a hash with the following keys
+;; * method - textile-to-html, haml-to-html, or strip-nydp-tags, or anything that takes a string and returns a string
+;; * esc - a function that takes a string and returns another string such that when 'method processes the result, the original string is returned. For example, if 'method is 'textile-to-html, then 'esc could be (fn (txt) "==~|txt|==") because "==" is used by textile to mark text not-to-be-processed.
+;; * interpolator - a function that takes an uncompiled lisp form and returns another uncompiled lisp form such that when executed in the context of 'string-pieces will give the desired result
+;; returns a mixed list containing strings or uncompiled lisp forms such that the concatenation of the list is html output by converter.method (the textile, haml, or other processor)
 (def html-process-parts (parts processor)
-  ; 'parts a mixed list containing strings or uncompiled lisp forms - the cdr of 'string-pieces after parting a string with interpolations
-  ; 'converter is a hash with the following keys
-  ; * method - textile-to-html, haml-to-html, or strip-nydp-tags, or anything that takes a string and returns a string
-  ; * esc - a function that takes a string and returns another string such that when 'method processes the result, the original string is returned. For example, if 'method is 'textile-to-html, then 'esc could be (fn (txt) "==~|txt|==") because "==" is used by textile to mark text not-to-be-processed.
-  ; * interpolator - a function that takes an uncompiled lisp form and returns another uncompiled lisp form such that when executed in the context of 'string-pieces will give the desired result
-  ; returns a mixed list containing strings or uncompiled lisp forms such that the concatenation of the list is html output by converter.method (the textile, haml, or other processor)
   (html-resplit (string-split (processor.method (j:map processor.processor parts))
                               processor.sep)
                 processor.hsh))
@@ -59,23 +59,23 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 (def html-build-interpolator (pieces converter)
   `(string-pieces ,@(html-process-parts pieces (html-build-processor converter))))
 
+;; remove <nydp> and </nydp> tags from given 'txt, some editing environments (ckeditor) may require such tags
+;; in order to protect active content from reformatting or other transformations
 (def strip-nydp-tags (txt)
-  ; remove <nydp> and </nydp> tags from given 'txt, some editing environments (ckeditor) may require such tags
-  ; in order to protect active content from reformatting or other transformations
   (string-replace "</?nydp>" "" txt))
 
+;; produce code to convert 'arg to html using a null interpreter.
+;; in other words, assume input is already html. Normally, we would
+;; just return the argument, but it's useful to take advantage of the fact that
+;; each interpolation ~(foo) is replaced with ~(interpolate (foo)), and
+;; you may override 'interpolate for your own nefarious purposes.
+;;
+;; for example:
+;;
+;; (render-as-html "<p>hello world</p>")            ;=> "<p>hello world</p>"
+;; (render-as-html (get-some-text-from 'somewhere)) ;=> (x1 (get-some-text-from 'somewhere))
+;; (render-as-html "<p>hello ~|name|</p>")          ;=>  (string-pieces "<p>hello" (interpolate name) "<p>")
 (mac render-as-html (arg)
-     ; produce code to convert 'arg to html using a null interpreter.
-     ; in other words, assume input is already html. Normally, we would
-     ; just return the argument, but it's useful to take advantage of the fact that
-     ; each interpolation ~(foo) is replaced with ~(interpolate (foo)), and
-     ; you may override 'interpolate for your own nefarious purposes.
-     ;
-     ; for example:
-     ;
-     ; (render-as-html "<p>hello world</p>")            ;=> "<p>hello world</p>"
-     ; (render-as-html (get-some-text-from 'somewhere)) ;=> (x1 (get-some-text-from 'somewhere))
-     ; (render-as-html "<p>hello ~|name|</p>")          ;=>  (string-pieces "<p>hello" (interpolate name) "<p>")
      (if (isa 'string arg)
          arg
          (and (pair? arg)
@@ -234,8 +234,8 @@ Also provides percent-syntax for concise html-generation in nydp, for example
           `(let ,link-txt ,txt
              (if ,link-txt (link-to ,link-txt ,path ,attrs)))))
 
-(dox-add-doc 'textile-to-html 'def '("assumes 'arg is a string in Textile format, converts to html and returns the result") '(arg))
-(dox-add-doc 'haml-to-html    'def '("assumes 'arg is a string in HAML format, converts to html and returns the result"   ) '(arg))
+(dox-add-doc 'textile-to-html 'def '("assumes 'arg is a string in Textile format, converts to html and returns the result") '(arg) nil (dox/attrs))
+(dox-add-doc 'haml-to-html    'def '("assumes 'arg is a string in HAML format, converts to html and returns the result"   ) '(arg) nil (dox/attrs))
 
 (def to-url-params (hsh)
   (joinstr "&" (map λk(joinstr "=" k (percent-encode hsh.,k)) (hash-keys hsh))))
