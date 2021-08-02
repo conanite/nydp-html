@@ -35,7 +35,7 @@ module Nydp
     class PercentEncode
       include Nydp::Builtin::Base, Singleton
 
-      def call arg
+      def builtin_call arg
         percent_encode arg.to_s
       end
 
@@ -69,14 +69,14 @@ module Nydp
         end
       end
 
-      def call *args
+      def builtin_call *args
         convert_from_haml(args.first.to_s)
       end
     end
 
     class TextileToHtml
       include Nydp::Builtin::Base, Singleton
-      def call *args
+      def builtin_call *args
         src = args.first.to_s
         rc = RedCloth.new(src)
         rc.no_span_caps = true
