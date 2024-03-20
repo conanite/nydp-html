@@ -151,6 +151,8 @@ Also provides percent-syntax for concise html-generation in nydp, for example
 ;; return empty string if v is nil, otherwise a string representation
 (def html/tag-attribute-string (k v)
   (if (no v) ""
+      (eq? v t)
+      " ~k"
       " ~|k|='~(html/escape-attribute:joinstr " " v)'"))
 
 (def as-tag-attrs (attrs)
